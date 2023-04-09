@@ -1,11 +1,11 @@
 import { Module } from "@nestjs/common";
-import { LeadsController } from "./controllers/leads.controller";
+import { LeadsControllerV1 } from "./controllers/leads.controller";
 import { ILeadsRepository } from "./interfaces/leads-repository.interface";
 import { PrismaLeadsRepository } from "./repositories/prisma-leads.repository";
 import { LeadsService } from "./services/leads.service";
 
 @Module({
-  controllers: [LeadsController],
+  controllers: [LeadsControllerV1],
   providers: [
     LeadsService,
     {

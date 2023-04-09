@@ -1,5 +1,6 @@
-import { faker } from "@faker-js/faker";
-import { Lead, PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
+import { LeadSeeder } from "./seeders/lead-seeder";
+import { SeederFn, SeedFactory } from "./utils/seed-factory";
 
 // Seed setup
 const prisma = new PrismaClient({
@@ -15,23 +16,13 @@ async function main() {
     return;
   }
 
-  console.log("\n🌱 Seed Service Started... 🌱");
+  console.log("\n🌱 [Prisma Seed Service]: Started.");
 
-  console.log("Generating data...");
+  const seeders: SeederFn[] = [LeadSeeder];
 
-  const leads: Omit<Lead, "id" | "createdAt">[] = [];
+  await SeedFactory(prisma, seeders);
 
-  for (let c = 0; c < 100; c++) {
-    leads.push({
-      email: faker.internet.email(),
-    });
-  }
-
-  console.log("🌱 Seeding...");
-
-  await prisma.lead.createMany({ data: leads });
-
-  console.log("Done, shutting down...");
+  console.log("🌱 [Prisma Seed Service]: Shutting down.");
 }
 
 // Run
@@ -40,7 +31,7 @@ main()
     await prisma.$disconnect();
   })
   .catch(async (e) => {
-    console.error(e);
+    console.error("🌱 [Seed Service]: Something went wrong.\n", e);
     await prisma.$disconnect();
     process.exit(1);
   });

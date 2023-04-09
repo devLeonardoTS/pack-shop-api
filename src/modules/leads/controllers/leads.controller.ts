@@ -17,7 +17,7 @@ import { Lead } from "../entities/lead.entity";
 import { LeadsService } from "../services/leads.service";
 
 @Controller("leads")
-export class LeadsController {
+export class LeadsControllerV1 {
   constructor(private readonly leadsService: LeadsService) {}
 
   @Post()

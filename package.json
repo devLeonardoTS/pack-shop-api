@@ -17,9 +17,8 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": " node --inspect -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "pretest:int": "dotenv -e .env.test -- prisma migrate reset --force",
-    "test:int": "dotenv -e .env.test -- jest --runInBand --no-cache --watch --config ./jest-int.config.ts",
-    "test:e2e": "dotenv -e .env.test -- jest --config ./jest-e2e.config.ts"
+    "pretest:e2e": "dotenv -e .env.test -- prisma migrate reset --force --skip-seed",
+    "test:e2e": "dotenv -e .env.test -- jest --runInBand --config ./jest-e2e.config.ts"
   },
   "dependencies": {
     "@nestjs/common": "^9.0.0",
@@ -32,6 +31,7 @@
     "class-validator": "^0.14.0",
     "dotenv": "^16.0.3",
     "nanoid": "^4.0.2",
+    "query-string": "^8.1.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.2.0"
   },

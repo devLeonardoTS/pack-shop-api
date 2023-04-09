@@ -5,7 +5,7 @@ import {
   OnModuleInit,
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config/dist";
-import { PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient } from "@prisma/client";
 
 @Injectable()
 export class PrismaService
@@ -43,14 +43,14 @@ export class PrismaService
       return;
     }
 
-    // Get all prisma models...
-    const models = Reflect.ownKeys(this).filter((key) => key[0] !== "_");
+    // Get all tables derived from our prisma models...
+    const modelKeys = Prisma.dmmf.datamodel.models.map((model) => model.name);
 
-    // Clear all models (tables).
-    models.map(async (modelKey) => {
-      if (typeof this[modelKey].deleteMany === "function") {
-        await this[modelKey].deleteMany({});
-      }
+    // Clear all models and restart identity.
+    modelKeys.map(async (table) => {
+      await this.$executeRawUnsafe(
+        `TRUNCATE TABLE "${String(table)}" RESTART IDENTITY;`,
+      );
     });
   }
 }
