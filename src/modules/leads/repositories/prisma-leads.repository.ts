@@ -11,17 +11,7 @@ export class PrismaLeadsRepository implements ILeadsRepository {
   constructor(private readonly db: PrismaService) {}
 
   async create(createRequest: CreateLeadRequest): Promise<Lead> {
-    const created: Lead = await this.db.lead
-      .create({ data: createRequest })
-      .catch((error) => {
-        throw error;
-        // if (error instanceof Prisma.PrismaClientKnownRequestError) {
-        //   if (error.code === "P2002") {
-        //     throw new ConflictException();
-        //   }
-        // }
-        // return undefined;
-      });
+    const created: Lead = await this.db.lead.create({ data: createRequest });
     return created;
   }
   async findMany(paginationQuery: PaginationQuery): Promise<Lead[]> {
