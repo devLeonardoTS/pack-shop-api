@@ -1,5 +1,4 @@
-import { ConflictException, Injectable } from "@nestjs/common";
-import { Prisma } from "@prisma/client";
+import { Injectable } from "@nestjs/common";
 import { PrismaService } from "@src/databases/prisma/prisma.service";
 import { PaginationQuery } from "@src/modules/common/dtos/pagination.query";
 import { CreateLeadRequest } from "../dtos/create-lead.request";
@@ -12,16 +11,7 @@ export class PrismaLeadsRepository implements ILeadsRepository {
   constructor(private readonly db: PrismaService) {}
 
   async create(createRequest: CreateLeadRequest): Promise<Lead> {
-    const created: Lead = await this.db.lead
-      .create({ data: createRequest })
-      .catch((error) => {
-        if (error instanceof Prisma.PrismaClientKnownRequestError) {
-          if (error.code === "P2002") {
-            throw new ConflictException();
-          }
-        }
-        return undefined;
-      });
+    const created: Lead = await this.db.lead.create({ data: createRequest });
     return created;
   }
   async findMany(paginationQuery: PaginationQuery): Promise<Lead[]> {
