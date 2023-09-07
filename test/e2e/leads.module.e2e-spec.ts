@@ -30,7 +30,7 @@ describe("leads module", () => {
     prismaService = module.get<PrismaService>(PrismaService);
 
     await SeedFactory(prismaService, [LeadSeeder]);
-    await AppHttpSetup(app);
+    await AppHttpSetup(app); // Set base configs for server start-up.
     await app.init();
   });
 
