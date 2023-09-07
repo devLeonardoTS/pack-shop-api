@@ -1,6 +1,7 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config/dist";
 import { GlobalServicesModule } from "./global-services.module";
+import { HealthCheckModule } from "./modules/health_check/health-check.module";
 import { LeadsModule } from "./modules/leads/leads.module";
 
 @Module({
@@ -8,6 +9,7 @@ import { LeadsModule } from "./modules/leads/leads.module";
     ConfigModule.forRoot({ isGlobal: true }),
     GlobalServicesModule,
     LeadsModule,
+    HealthCheckModule,
   ],
 })
 export class AppModule {}
