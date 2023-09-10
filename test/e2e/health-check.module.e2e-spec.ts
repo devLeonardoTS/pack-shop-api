@@ -1,6 +1,6 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
-import { HealthCheckModule } from "@src/modules/health_check/health-check.module";
+import { HealthCheckModule } from "@src/modules/health-check/health-check.module";
 import { AppHttpSetup } from "@src/utils/app-http.setup";
 import * as request from "supertest";
 
