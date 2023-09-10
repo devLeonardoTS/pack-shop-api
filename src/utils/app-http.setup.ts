@@ -5,6 +5,8 @@ import {
 } from "@nestjs/common";
 
 export async function AppHttpSetup(app: INestApplication) {
+  // Allow CORS
+  app.enableCors();
   // Auto-validation setup.
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
   // Versioning setup.
