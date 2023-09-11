@@ -16,3 +16,34 @@ model Lead {
   email String @unique
   createdAt DateTime @default(now())
 }
+
+model AccountOriginType {
+  id Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  origin String @db.VarChar(255) @unique
+
+  accounts UserAccount[]
+}
+
+model AccountRoleType {
+  id Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  role String @db.VarChar(255) @unique
+
+  accounts UserAccount[]
+}
+
+model UserAccount {
+  id Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  isActive Boolean @default(true)
+  email String? @db.VarChar(255) @unique
+  password String? @db.VarChar(255)
+  
+  roleType AccountRoleType @relation(fields: [roleTypeId], references: [id])
+  roleTypeId Int
+
+  originType AccountOriginType @relation(fields: [originTypeId], references: [id])
+  originTypeId Int
+}

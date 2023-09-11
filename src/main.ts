@@ -1,6 +1,5 @@
 import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
-import { PrismaService } from "./databases/prisma/prisma.service";
 import { AppHttpSetup } from "./utils/app-http.setup";
 
 async function bootstrap() {
@@ -10,9 +9,8 @@ async function bootstrap() {
   await AppHttpSetup(app);
   // ---------------------
 
-  // Prisma server setup
-  const prismaService = app.get(PrismaService);
-  await prismaService.enableShutdownHooks(app);
+  // Enabled Shutdown Hoooks
+  app.enableShutdownHooks();
   // -------------------
 
   await app.listen(3000);

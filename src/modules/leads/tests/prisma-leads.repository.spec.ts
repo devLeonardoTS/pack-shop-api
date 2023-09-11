@@ -1,5 +1,5 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { PrismaService } from "@src/databases/prisma/prisma.service";
+import PrismaService from "@src/databases/prisma/prisma.service";
 import { PaginationQuery } from "@src/modules/common/dtos/pagination.query";
 import { CreateLeadRequest } from "../dtos/create-lead.request";
 import { UpdateLeadRequest } from "../dtos/update-lead.request";

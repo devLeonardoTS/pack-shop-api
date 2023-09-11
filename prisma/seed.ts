@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { BaseConfigsSeeder } from "./seeders/base-configs-seeder";
 import { LeadSeeder } from "./seeders/lead-seeder";
 import { SeederFn, SeedFactory } from "./utils/seed-factory";
 
@@ -18,7 +19,7 @@ async function main() {
 
   console.log("\n🌱 [Prisma Seed Service]: Started.");
 
-  const seeders: SeederFn[] = [LeadSeeder];
+  const seeders: SeederFn[] = [LeadSeeder, BaseConfigsSeeder];
 
   await SeedFactory(prisma, seeders);
 

@@ -1,7 +1,7 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { Test, TestingModule } from "@nestjs/testing";
-import { PrismaService } from "@src/databases/prisma/prisma.service";
+import PrismaService from "@src/databases/prisma/prisma.service";
 import { GlobalServicesModule } from "@src/global-services.module";
 import { CreateLeadRequest } from "@src/modules/leads/dtos/create-lead.request";
 import { UpdateLeadRequest } from "@src/modules/leads/dtos/update-lead.request";
