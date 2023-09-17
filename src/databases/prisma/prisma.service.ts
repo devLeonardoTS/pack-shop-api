@@ -52,7 +52,7 @@ export default class PrismaService
     // Clear all models and restart identity.
     modelKeys.map(async (table) => {
       await this.$executeRawUnsafe(
-        `TRUNCATE TABLE "${String(table)}" RESTART IDENTITY;`,
+        `TRUNCATE TABLE "${String(table)}" RESTART IDENTITY CASCADE;`,
       );
     });
   }

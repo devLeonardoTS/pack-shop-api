@@ -11,9 +11,12 @@ export class PrismaUserAccountRepository implements IUserAccountRepository {
   constructor(private readonly db: PrismaService) {}
 
   async create(createRequest: CreateUserAccountRequest): Promise<UserAccount> {
+    delete createRequest.confirmPassword;
+
     const created: UserAccount = await this.db.userAccount.create({
       data: createRequest,
     });
+
     return created;
   }
   async findMany(paginationQuery: PaginationQuery): Promise<UserAccount[]> {

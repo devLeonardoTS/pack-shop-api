@@ -1,15 +1,13 @@
-import {
-  IsEmail,
-  IsNotEmpty,
-  IsNumberString,
-  IsOptional,
-} from "class-validator";
+import { Type } from "class-transformer";
+import { IsEmail, IsNotEmpty, IsOptional } from "class-validator";
 
 export class CreateUserAccountRequest {
-  @IsNumberString()
+  @IsNotEmpty()
+  @Type(() => Number)
   roleTypeId: number;
 
-  @IsNumberString()
+  @IsNotEmpty()
+  @Type(() => Number)
   originTypeId: number;
 
   @IsNotEmpty()
@@ -18,4 +16,7 @@ export class CreateUserAccountRequest {
 
   @IsOptional()
   password?: string;
+
+  @IsOptional()
+  confirmPassword?: string;
 }

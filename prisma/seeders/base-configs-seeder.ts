@@ -1,5 +1,7 @@
-import { AccountRoleType, PrismaClient } from "@prisma/client";
-import { AccountOriginType } from "@src/modules/user-account/entities/account-origin-type.entity";
+import { PrismaClient } from "@prisma/client";
+import { createAccountOriginTypes } from "./objects/AccountOriginTypes";
+import { createAccountRoleTypes } from "./objects/AccountRoleTypes";
+import { createUserAccounts } from "./objects/UserAccounts";
 
 async function seedAccountOriginTypes(prismaClient: PrismaClient) {
   const hasBeenSeeded: boolean =
@@ -12,19 +14,7 @@ async function seedAccountOriginTypes(prismaClient: PrismaClient) {
 
   console.log("🌱 [AccountOriginTypes]: Seeding...");
 
-  const objects: Omit<AccountOriginType, "id" | "createdAt">[] = [];
-
-  objects.push(
-    {
-      origin: "local",
-    },
-    {
-      origin: "google",
-    },
-    {
-      origin: "facebook",
-    },
-  );
+  const objects = createAccountOriginTypes();
 
   await prismaClient.accountOriginType.createMany({ data: objects });
 }
@@ -40,30 +30,29 @@ async function seedAccountRoleTypes(prismaClient: PrismaClient) {
 
   console.log("🌱 [AccountRoleTypes]: Seeding...");
 
-  const objects: Omit<AccountRoleType, "id" | "createdAt">[] = [];
-
-  objects.push(
-    {
-      role: "admin",
-    },
-    {
-      role: "seller",
-    },
-    {
-      role: "reseller",
-    },
-    {
-      role: "artisan",
-    },
-    {
-      role: "consumer",
-    },
-  );
+  const objects = createAccountRoleTypes();
 
   await prismaClient.accountRoleType.createMany({ data: objects });
+}
+
+async function seedUserAccounts(prismaClient: PrismaClient) {
+  const hasBeenSeeded: boolean =
+    (await prismaClient.accountRoleType.count()) > 0;
+
+  if (hasBeenSeeded) {
+    console.log("🌱 [UserAccounts]: Already Seeded.");
+    return;
+  }
+
+  console.log("🌱 [UserAccounts]: Seeding...");
+
+  const objects = createUserAccounts();
+
+  await prismaClient.userAccount.createMany({ data: objects });
 }
 
 export async function BaseConfigsSeeder(prismaClient: PrismaClient) {
   await seedAccountOriginTypes(prismaClient);
   await seedAccountRoleTypes(prismaClient);
+  await seedUserAccounts(prismaClient);
 }
