@@ -16,6 +16,7 @@ import { UserAccountModule } from "./modules/user-account/user-account.module";
     AccountOriginTypeModule,
     AccountRoleTypeModule,
     UserAccountModule,
+    // BusinessProfileModule,
   ],
 })
 export class AppModule {}

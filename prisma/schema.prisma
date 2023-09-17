@@ -46,4 +46,21 @@ model UserAccount {
 
   originType AccountOriginType @relation(fields: [originTypeId], references: [id])
   originTypeId Int
+
+  businessProfile BusinessProfile?
+}
+
+model BusinessProfile {
+  id Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  brand String @db.VarChar(255)
+  nickname String @db.VarChar(255)
+  cnpj String @db.VarChar(14) @unique  
+  pictureUrl String @db.VarChar(255)
+
+  description String? @db.Text
+
+  userAccount UserAccount @relation(fields: [userAccountId], references: [id])
+  userAccountId Int @unique
 }
