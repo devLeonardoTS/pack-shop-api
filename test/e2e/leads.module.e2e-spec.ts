@@ -1,12 +1,12 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { Test, TestingModule } from "@nestjs/testing";
-import { PrismaService } from "@src/databases/prisma/prisma.service";
+import { AppHttpSetup } from "@src/app-http.setup";
+import PrismaService from "@src/databases/prisma/prisma.service";
 import { GlobalServicesModule } from "@src/global-services.module";
 import { CreateLeadRequest } from "@src/modules/leads/dtos/create-lead.request";
 import { UpdateLeadRequest } from "@src/modules/leads/dtos/update-lead.request";
 import { LeadsModule } from "@src/modules/leads/leads.module";
-import { AppHttpSetup } from "@src/utils/app-http.setup";
 import { LeadSeeder } from "prisma/seeders/lead-seeder";
 import { SeedFactory } from "prisma/utils/seed-factory";
 import queryString from "query-string";

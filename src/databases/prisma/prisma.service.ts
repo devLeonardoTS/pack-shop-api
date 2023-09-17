@@ -1,16 +1,18 @@
 import {
-  INestApplication,
   Injectable,
+  OnApplicationShutdown,
   OnModuleDestroy,
   OnModuleInit,
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config/dist";
 import { Prisma, PrismaClient } from "@prisma/client";
+import { BaseConfigsSeeder } from "prisma/seeders/base-configs-seeder";
+import { SeedFactory } from "prisma/utils/seed-factory";
 
 @Injectable()
-export class PrismaService
-  extends PrismaClient
-  implements OnModuleInit, OnModuleDestroy
+export default class PrismaService
+  extends PrismaClient<Prisma.PrismaClientOptions>
+  implements OnModuleInit, OnModuleDestroy, OnApplicationShutdown
 {
   constructor(private readonly config: ConfigService) {
     super({
@@ -22,19 +24,20 @@ export class PrismaService
     });
   }
 
+  async onApplicationShutdown(signal?: string) {
+    await this.onModuleDestroy();
+  }
+
   async onModuleInit() {
     await this.$connect();
+
+    // Runs all the data seeding necessary to run the system on a new database;
+    await SeedFactory(this, [BaseConfigsSeeder]);
+    // ----
   }
 
   async onModuleDestroy() {
     await this.$disconnect();
-  }
-
-  async enableShutdownHooks(app: INestApplication) {
-    this.$on("beforeExit", async () => {
-      await this.onModuleDestroy();
-      await app.close();
-    });
   }
 
   async clearDb() {
@@ -49,7 +52,7 @@ export class PrismaService
     // Clear all models and restart identity.
     modelKeys.map(async (table) => {
       await this.$executeRawUnsafe(
-        `TRUNCATE TABLE "${String(table)}" RESTART IDENTITY;`,
+        `TRUNCATE TABLE "${String(table)}" RESTART IDENTITY CASCADE;`,
       );
     });
   }
