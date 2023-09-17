@@ -29,6 +29,8 @@ export class UserAccountService {
 
     const resource = await this.userAccountRepository.create(createRequest);
 
+    delete resource.password;
+
     return resource;
   }
 
