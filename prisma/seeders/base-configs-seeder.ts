@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { createAccountOriginTypes } from "./objects/AccountOriginTypes";
 import { createAccountRoleTypes } from "./objects/AccountRoleTypes";
+import { createTokenTypes } from "./objects/TokenTypes";
 import { createUserAccounts } from "./objects/UserAccounts";
 
 async function seedAccountOriginTypes(prismaClient: PrismaClient) {
@@ -51,8 +52,24 @@ async function seedUserAccounts(prismaClient: PrismaClient) {
   await prismaClient.userAccount.createMany({ data: objects });
 }
 
+async function seedTokenTypes(prismaClient: PrismaClient) {
+  const hasBeenSeeded: boolean = (await prismaClient.tokenType.count()) > 0;
+
+  if (hasBeenSeeded) {
+    console.log("🌱 [TokenTypes]: Already Seeded.");
+    return;
+  }
+
+  console.log("🌱 [TokenTypes]: Seeding...");
+
+  const objects = createTokenTypes();
+
+  await prismaClient.tokenType.createMany({ data: objects });
+}
+
 export async function BaseConfigsSeeder(prismaClient: PrismaClient) {
   await seedAccountOriginTypes(prismaClient);
   await seedAccountRoleTypes(prismaClient);
   await seedUserAccounts(prismaClient);
+  await seedTokenTypes(prismaClient);
 }

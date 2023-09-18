@@ -47,7 +47,31 @@ model UserAccount {
   originType AccountOriginType @relation(fields: [originTypeId], references: [id])
   originTypeId Int
 
+  tokens Token[]
+
   businessProfile BusinessProfile?
+}
+
+model Token {
+  id Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  expiresAt DateTime
+  uid String @db.VarChar(255) @unique @default(uuid())
+
+  userAccount UserAccount @relation(fields: [userAccountId], references: [id])
+  userAccountId Int
+
+  tokenType TokenType @relation(fields: [tokenTypeId], references: [id])
+  tokenTypeId Int
+}
+
+model TokenType {
+  id Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  type String @db.VarChar(255)
+
+  tokens Token[]
 }
 
 model BusinessProfile {
