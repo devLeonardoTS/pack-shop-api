@@ -37,8 +37,7 @@ async function seedAccountRoleTypes(prismaClient: PrismaClient) {
 }
 
 async function seedUserAccounts(prismaClient: PrismaClient) {
-  const hasBeenSeeded: boolean =
-    (await prismaClient.accountRoleType.count()) > 0;
+  const hasBeenSeeded: boolean = (await prismaClient.userAccount.count()) > 0;
 
   if (hasBeenSeeded) {
     console.log("🌱 [UserAccounts]: Already Seeded.");
@@ -47,7 +46,7 @@ async function seedUserAccounts(prismaClient: PrismaClient) {
 
   console.log("🌱 [UserAccounts]: Seeding...");
 
-  const objects = createUserAccounts();
+  const objects = await createUserAccounts();
 
   await prismaClient.userAccount.createMany({ data: objects });
 }

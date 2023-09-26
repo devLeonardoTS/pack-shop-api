@@ -29,8 +29,6 @@ export class UserAccountService {
 
     const resource = await this.userAccountRepository.create(createRequest);
 
-    delete resource.password;
-
     return resource;
   }
 
@@ -43,9 +41,7 @@ export class UserAccountService {
     const pages = Math.ceil(total / limit);
     const previous = page > 1 && page <= pages;
     const next = pages > 1 && page < pages;
-    const data = (
-      await this.userAccountRepository.findMany(paginatedRequest)
-    ).map(({ password, ...otherProperties }) => otherProperties);
+    const data = await this.userAccountRepository.findMany(paginatedRequest);
 
     const result: PaginationResponse<UserAccount> = {
       total,
@@ -65,7 +61,15 @@ export class UserAccountService {
       throw new NotFoundException();
     }
 
-    delete resource.password;
+    return resource;
+  }
+
+  async findByEmail(email: string): Promise<UserAccount> {
+    const resource = await this.userAccountRepository.findByEmail(email);
+
+    if (typeof resource === "undefined") {
+      throw new NotFoundException();
+    }
 
     return resource;
   }
@@ -82,14 +86,11 @@ export class UserAccountService {
       throw new NotFoundException();
     }
 
-    delete resource.password;
-
     return resource;
   }
 
   async remove(id: number): Promise<UserAccount> {
     const resource = await this.userAccountRepository.remove(id);
-    delete resource.password;
     return resource;
   }
 
