@@ -10,7 +10,7 @@ export class AuthController {
   @Post("local")
   async signIn(@Request() req) {
     const response = {
-      access_token: await this.authService.signIn(req.user),
+      accessToken: await this.authService.signIn(req.user),
       user: req.user,
     };
     return response;
