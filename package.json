@@ -7,7 +7,8 @@
   "license": "Apache-2.0",
   "scripts": {
     "build": "nest build",
-    "prod:migrate": "npx prisma migrate deploy -- npx prisma generate",
+    "orm:migrate": "npx prisma migrate deploy",
+    "orm:generate": "npx prisma generate",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
