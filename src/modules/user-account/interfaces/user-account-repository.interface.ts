@@ -7,6 +7,7 @@ export interface IUserAccountRepository {
   create(createRequest: CreateUserAccountRequest): Promise<UserAccount>;
   findMany(paginationQuery: PaginationQuery): Promise<UserAccount[]>;
   findById(id: number): Promise<UserAccount>;
+  findByEmail(email: string): Promise<UserAccount>;
   update(id: number, updateReq: UpdateUserAccountRequest): Promise<UserAccount>;
   remove(id: number): Promise<UserAccount>;
   countAll(): Promise<number>;
