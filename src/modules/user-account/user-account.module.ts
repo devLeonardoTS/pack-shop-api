@@ -29,5 +29,6 @@ import { UserAccountService } from "./services/user-account.service";
       useClass: PrismaAccountRoleTypeRepository,
     },
   ],
+  exports: [UserAccountService],
 })
 export class UserAccountModule {}

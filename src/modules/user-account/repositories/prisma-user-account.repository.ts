@@ -19,6 +19,7 @@ export class PrismaUserAccountRepository implements IUserAccountRepository {
 
     return created;
   }
+
   async findMany(paginationQuery: PaginationQuery): Promise<UserAccount[]> {
     const { page, limit } = paginationQuery;
 
@@ -32,21 +33,32 @@ export class PrismaUserAccountRepository implements IUserAccountRepository {
 
     return list;
   }
+
   async findById(id: number): Promise<UserAccount> {
-    const item: UserAccount = await this.db.userAccount.findFirst({
+    const resource: UserAccount = await this.db.userAccount.findFirst({
       where: { id },
     });
-    return item;
+    return resource;
   }
+
+  async findByEmail(email: string): Promise<UserAccount> {
+    const resource: UserAccount = await this.db.userAccount.findFirst({
+      where: { email },
+      include: { originType: true, roleType: true },
+    });
+    return resource;
+  }
+
   async update(
     id: number,
     updateReq: UpdateUserAccountRequest,
   ): Promise<UserAccount> {
-    const item = await this.findById(id);
-    let updated: UserAccount | undefined = undefined;
+    const resource = await this.findById(id);
+    let updated: Omit<UserAccount, "originType" | "roleType"> | undefined =
+      undefined;
 
-    if (item && !isNaN(id)) {
-      const updateTarget = item;
+    if (resource && !isNaN(id)) {
+      const updateTarget = resource;
       const dataSource = updateReq;
 
       updated = Object.keys(updateTarget).reduce((obj, key) => {
@@ -68,10 +80,12 @@ export class PrismaUserAccountRepository implements IUserAccountRepository {
 
     return updated;
   }
+
   async remove(id: number): Promise<UserAccount> {
     const removed = await this.db.userAccount.delete({ where: { id } });
     return removed;
   }
+
   async countAll(): Promise<number> {
     return await this.db.userAccount.count();
   }

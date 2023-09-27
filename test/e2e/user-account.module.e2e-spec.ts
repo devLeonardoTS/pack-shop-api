@@ -57,6 +57,7 @@ describe("user-account module", () => {
           originTypeId: expect.any(Number),
           roleTypeId: expect.any(Number),
           email: input.email,
+          password: expect.any(String),
           isActive: expect.any(Boolean),
           createdAt: expect.any(String),
           updatedAt: expect.any(String),
@@ -173,12 +174,13 @@ describe("user-account module", () => {
           pages: expect.any(Number),
           previous: expect.any(Boolean),
           next: expect.any(Boolean),
-          data: expect.arrayContaining<Omit<UserAccount, "password">>([
+          data: expect.arrayContaining<UserAccount>([
             {
               id: expect.any(Number),
               email: expect.any(String),
               isActive: expect.any(Boolean),
               originTypeId: expect.any(Number),
+              password: expect.any(String),
               roleTypeId: expect.any(Number),
               createdAt: expect.any(String),
               updatedAt: expect.any(String),
@@ -199,12 +201,13 @@ describe("user-account module", () => {
             pages: expect.any(Number),
             previous: expect.any(Boolean),
             next: expect.any(Boolean),
-            data: expect.arrayContaining<Omit<UserAccount, "password">>([
+            data: expect.arrayContaining<UserAccount>([
               {
                 id: expect.any(Number),
                 email: expect.any(String),
                 isActive: expect.any(Boolean),
                 originTypeId: expect.any(Number),
+                password: expect.any(String),
                 roleTypeId: expect.any(Number),
                 createdAt: expect.any(String),
                 updatedAt: expect.any(String),
@@ -227,21 +230,20 @@ describe("user-account module", () => {
       });
     });
 
-    describe('GET: "/v1/leads/:id"', () => {
+    describe('GET: "/v1/user-account/:id"', () => {
       it("Should retrieve an User Account by id, returning found resource", async () => {
         const param = 1;
 
-        const expected = expect.objectContaining<Omit<UserAccount, "password">>(
-          {
-            id: expect.any(Number),
-            email: expect.any(String),
-            isActive: expect.any(Boolean),
-            originTypeId: expect.any(Number),
-            roleTypeId: expect.any(Number),
-            createdAt: expect.any(String),
-            updatedAt: expect.any(String),
-          },
-        );
+        const expected = expect.objectContaining<UserAccount>({
+          id: expect.any(Number),
+          email: expect.any(String),
+          isActive: expect.any(Boolean),
+          originTypeId: expect.any(Number),
+          password: expect.any(String),
+          roleTypeId: expect.any(Number),
+          createdAt: expect.any(String),
+          updatedAt: expect.any(String),
+        });
 
         const result = await request(app.getHttpServer()).get(
           baseEndpoint + `/${param}`,
@@ -254,7 +256,7 @@ describe("user-account module", () => {
 
     describe('PUT: "/v1/user-account/:id"', () => {
       it("Should update User Account found by id, returning updated resource", async () => {
-        const param = 1;
+        const param = 2;
 
         const input: UpdateUserAccountRequest = {
           currentPassword: "adm123",
