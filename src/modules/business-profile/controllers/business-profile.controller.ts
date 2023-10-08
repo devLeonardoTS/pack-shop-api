@@ -8,7 +8,10 @@ import {
   Post,
   Put,
   Query,
+  Request,
+  UseGuards,
 } from "@nestjs/common";
+import { JwtAuthGuard } from "@src/modules/auth/jwt-auth.guard";
 import { PaginationQuery } from "@src/modules/common/dtos/pagination.query";
 import { PaginationResponse } from "@src/modules/common/dtos/pagination.response";
 import { CreateBusinessProfileRequest } from "../dto/create-business-profile.request";
@@ -22,11 +25,14 @@ export class BusinessProfileController {
     private readonly businessProfileService: BusinessProfileService,
   ) {}
 
+  @UseGuards(JwtAuthGuard)
   @Post()
   async create(
+    @Request() req,
     @Body() createRequest: CreateBusinessProfileRequest,
   ): Promise<BusinessProfile> {
-    return await this.businessProfileService.create(createRequest);
+    const { id } = req.user;
+    return await this.businessProfileService.create(id, createRequest);
   }
 
   @Get()

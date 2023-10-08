@@ -4,11 +4,6 @@ export class CreateBusinessProfileRequest {
   @IsNotEmpty()
   @IsString()
   @MaxLength(255)
-  role: string;
-
-  @IsNotEmpty()
-  @IsString()
-  @MaxLength(255)
   brand: string;
 
   @IsNotEmpty()
@@ -29,4 +24,8 @@ export class CreateBusinessProfileRequest {
   @IsOptional()
   @IsString()
   description?: string;
+
+  @IsOptional()
+  @IsString()
+  profileSlug: string;
 }

@@ -4,7 +4,10 @@ import { UpdateBusinessProfileRequest } from "../dto/update-business-profile.req
 import { BusinessProfile } from "../entities/business-profile.entity";
 
 export interface IBusinessProfileRepository {
-  create(createRequest: CreateBusinessProfileRequest): Promise<BusinessProfile>;
+  create(
+    requesterId: number,
+    createRequest: CreateBusinessProfileRequest,
+  ): Promise<BusinessProfile>;
   findMany(paginationQuery: PaginationQuery): Promise<BusinessProfile[]>;
   findById(id: number): Promise<BusinessProfile>;
   update(

@@ -1,8 +1,6 @@
 import { Inject, Injectable, NotFoundException } from "@nestjs/common";
-import { AccountRoleTypeService } from "@src/modules/account-role-type/services/account-role-type.service";
 import { PaginationQuery } from "@src/modules/common/dtos/pagination.query";
 import { PaginationResponse } from "@src/modules/common/dtos/pagination.response";
-import { UserAccountService } from "@src/modules/user-account/services/user-account.service";
 import { CreateBusinessProfileRequest } from "../dto/create-business-profile.request";
 import { UpdateBusinessProfileRequest } from "../dto/update-business-profile.request";
 import { BusinessProfile } from "../entities/business-profile.entity";
@@ -13,14 +11,16 @@ export class BusinessProfileService {
   constructor(
     @Inject(IBusinessProfileRepository)
     private readonly businessProfileRepository: IBusinessProfileRepository,
-    private readonly userAccountService: UserAccountService,
-    private readonly accountRoleTypeService: AccountRoleTypeService,
   ) {}
 
   async create(
+    requesterId: number,
     createRequest: CreateBusinessProfileRequest,
   ): Promise<BusinessProfile> {
-    const resource = await this.businessProfileRepository.create(createRequest);
+    const resource = await this.businessProfileRepository.create(
+      requesterId,
+      createRequest,
+    );
 
     return resource;
   }

@@ -13,11 +13,12 @@ export class PrismaBusinessAccountRepository
   constructor(private readonly db: PrismaService) {}
 
   async create(
+    requesterId: number,
     createRequest: CreateBusinessProfileRequest,
   ): Promise<BusinessProfile> {
     // ToDo: Get UserAccount Id from Request's Authorization Token.
     const created: BusinessProfile = await this.db.businessProfile.create({
-      data: { userAccountId: 1, ...createRequest },
+      data: { userAccountId: requesterId, ...createRequest },
     });
 
     return created;
@@ -46,7 +47,7 @@ export class PrismaBusinessAccountRepository
     updateReq: UpdateBusinessProfileRequest,
   ): Promise<BusinessProfile> {
     const item = await this.findById(id);
-    let updated: BusinessProfile | undefined = undefined;
+    let updated: Omit<BusinessProfile, "userAccount"> | undefined = undefined;
 
     if (item && !isNaN(id)) {
       const updateTarget = item;
