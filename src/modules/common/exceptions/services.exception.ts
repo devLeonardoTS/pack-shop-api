@@ -1,12 +1,12 @@
 import { HttpException, HttpStatus } from "@nestjs/common";
 
-export class DatabaseException extends HttpException {
+export class ServicesException extends HttpException {
   constructor(objectOrError?: string | object | any) {
-    const statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
+    const statusCode = HttpStatus.SERVICE_UNAVAILABLE;
     super(
       {
         statusCode,
-        message: "Database operation failed.",
+        message: "External service is currently unavailable.",
       },
       statusCode,
     );

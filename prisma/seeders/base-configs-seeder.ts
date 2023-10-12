@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { createAccountOriginTypes } from "./objects/AccountOriginTypes";
 import { createAccountRoleTypes } from "./objects/AccountRoleTypes";
+import { createBusinessTypes } from "./objects/BusinessTypes";
 import { createTokenTypes } from "./objects/TokenTypes";
 import { createUserAccounts } from "./objects/UserAccounts";
 
@@ -66,9 +67,25 @@ async function seedTokenTypes(prismaClient: PrismaClient) {
   await prismaClient.tokenType.createMany({ data: objects });
 }
 
+async function seedBusinessTypes(prismaClient: PrismaClient) {
+  const hasBeenSeeded: boolean = (await prismaClient.businessType.count()) > 0;
+
+  if (hasBeenSeeded) {
+    console.log("🌱 [BusinessTypes]: Already Seeded.");
+    return;
+  }
+
+  console.log("🌱 [BusinessTypes]: Seeding...");
+
+  const objects = createBusinessTypes();
+
+  await prismaClient.businessType.createMany({ data: objects });
+}
+
 export async function BaseConfigsSeeder(prismaClient: PrismaClient) {
   await seedAccountOriginTypes(prismaClient);
   await seedAccountRoleTypes(prismaClient);
   await seedUserAccounts(prismaClient);
   await seedTokenTypes(prismaClient);
+  await seedBusinessTypes(prismaClient);
 }

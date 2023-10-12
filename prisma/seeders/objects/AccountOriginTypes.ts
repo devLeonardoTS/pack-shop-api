@@ -1,7 +1,7 @@
 import { AccountOriginType } from "@src/modules/account-origin-type/entities/account-origin-type.entity";
 
 export function createAccountOriginTypes() {
-  const types: string[] = ["local", "google", "facebook"];
+  const types: string[] = ["LOCAL", "GOOGLE", "FACEBOOK"];
 
   const objects: Omit<AccountOriginType, "id" | "createdAt">[] = [];
 
