@@ -1,12 +1,10 @@
 import { BusinessType } from "@prisma/client";
-import { BusinessTypeConstants } from "@src/modules/business-type/constants/business-type.constants";
+import { EBusinessType } from "@src/modules/business-type/enums/business-type.enum";
 
 export function createBusinessTypes() {
   const objects: Omit<BusinessType, "id" | "createdAt">[] = [];
 
-  Object.values(BusinessTypeConstants).forEach((type) =>
-    objects.push({ type }),
-  );
+  Object.values(EBusinessType).forEach((type) => objects.push({ type }));
 
   return objects;
 }

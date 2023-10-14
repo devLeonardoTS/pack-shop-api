@@ -11,12 +11,13 @@ import {
   Request,
   UseGuards,
 } from "@nestjs/common";
-import { Business, Profile } from "@prisma/client";
+import { Business, Consumer, Profile } from "@prisma/client";
 import { PaginationQuery } from "@src/modules/common/dtos/pagination.query";
 import { PaginationResponse } from "@src/modules/common/dtos/pagination.response";
+import { EAccountRoleType } from "../account-role-type/enums/account-role-type.enum";
 import { JwtAuthGuard } from "../auth/jwt-auth.guard";
-import { UserAccountConstants } from "../user-account/constants/user-account.constants";
 import { BusinessService } from "./business/business-profile.service";
+import { ConsumerService } from "./consumer/consumer-profile.service";
 import { CreateProfileRequest } from "./dto/create-profile.request";
 import { UpdateProfileRequest } from "./dto/update-profile.request";
 import { ProfileImageService } from "./image/profile-image.service";
@@ -27,6 +28,7 @@ export class ProfileController {
   constructor(
     private readonly profileService: ProfileService,
     private readonly businessService: BusinessService,
+    private readonly consumerService: ConsumerService,
     private readonly profileImageService: ProfileImageService,
   ) {}
 
@@ -36,8 +38,7 @@ export class ProfileController {
     @Request() req,
     @Body() createRequest: CreateProfileRequest,
   ): Promise<Profile> {
-    const isAdminRequest =
-      req.user.roleType?.role === UserAccountConstants.Roles.ADMIN;
+    const isAdminRequest = req.user.roleType?.role === EAccountRoleType.ADMIN;
     if (!isAdminRequest) {
       createRequest.userAccountId = req.user.id;
     }
@@ -58,6 +59,14 @@ export class ProfileController {
     @Query() query: PaginationQuery,
   ): Promise<PaginationResponse<Business>> {
     const result = await this.businessService.findMany(query);
+    return result;
+  }
+
+  @Get("consumer")
+  async findManyConsumer(
+    @Query() query: PaginationQuery,
+  ): Promise<PaginationResponse<Consumer>> {
+    const result = await this.consumerService.findMany(query);
     return result;
   }
 

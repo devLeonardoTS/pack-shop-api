@@ -1,5 +1,12 @@
+import { EBusinessType } from "@src/modules/business-type/enums/business-type.enum";
 import { Type } from "class-transformer";
-import { IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
+import {
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from "class-validator";
 
 export class CreateBusinessRequest {
   @IsNotEmpty()
@@ -11,8 +18,8 @@ export class CreateBusinessRequest {
   brand: string;
 
   @IsNotEmpty()
-  @IsString()
-  businessType: string;
+  @IsEnum(EBusinessType)
+  businessType: EBusinessType;
 
   @IsOptional()
   @Type(() => Number)

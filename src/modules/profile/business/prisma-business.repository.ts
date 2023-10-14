@@ -1,17 +1,23 @@
-import { Injectable } from "@nestjs/common";
-import { Business } from "@prisma/client";
+import { ConflictException, Injectable } from "@nestjs/common";
+import { Business, Prisma } from "@prisma/client";
 import PrismaService from "@src/databases/prisma/prisma.service";
 import { PaginationQuery } from "@src/modules/common/dtos/pagination.query";
+import { ProfileService } from "../profile.service";
 import { IBusinessRepository } from "./business-repository.interface";
 import { CreateBusinessRequest } from "./dto/create-business.request";
 import { UpdateBusinessRequest } from "./dto/update-business.request";
 
 @Injectable()
 export class PrismaBusinessRepository implements IBusinessRepository {
-  constructor(private readonly db: PrismaService) {}
+  constructor(
+    private readonly db: PrismaService,
+    private readonly profileService: ProfileService,
+  ) {}
 
   async create(createRequest: CreateBusinessRequest): Promise<Business> {
     const { brand, businessType, cnpj, profileId } = createRequest;
+
+    await this.checkAlreadySpecialized(profileId);
 
     const created = await this.db.business.create({
       data: {
@@ -99,5 +105,23 @@ export class PrismaBusinessRepository implements IBusinessRepository {
 
   async countAll(): Promise<number> {
     return await this.db.business.count();
+  }
+
+  async checkAlreadySpecialized(profileId: number): Promise<boolean> {
+    const profile = (await this.profileService.findById(
+      profileId,
+    )) as Prisma.ProfileGetPayload<{
+      include: { business: true; consumer: true };
+    }>;
+
+    if (profile.consumer) {
+      throw new ConflictException("Profile already registered as a Consumer.");
+    }
+
+    if (profile.business) {
+      throw new ConflictException("Profile already registered as a Business.");
+    }
+
+    return false;
   }
 }

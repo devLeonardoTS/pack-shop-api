@@ -7,6 +7,7 @@ export class ServicesException extends HttpException {
       {
         statusCode,
         message: "External service is currently unavailable.",
+        error: "Service Unavailable",
       },
       statusCode,
     );

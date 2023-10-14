@@ -7,6 +7,7 @@ export class DatabaseException extends HttpException {
       {
         statusCode,
         message: "Database operation failed.",
+        error: "Internal Server Error",
       },
       statusCode,
     );

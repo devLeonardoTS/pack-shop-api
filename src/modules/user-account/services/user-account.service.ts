@@ -94,26 +94,6 @@ export class UserAccountService {
     return resource;
   }
 
-  async checkRoleType(id: number) {
-    const type = await this.accountRoleTypeService.findById(id);
-    if (!type) {
-      throw new BadRequestException(
-        "roleTypeId is invalid, check the list of available roles at GET: /account-role-type",
-      );
-    }
-    return type;
-  }
-
-  async checkOriginType(id: number) {
-    const type = await this.accountOriginTypeService.findById(id);
-    if (!type) {
-      throw new BadRequestException(
-        "originTypeId is invalid, check the list of available roles at GET: /account-origin-type",
-      );
-    }
-    return type;
-  }
-
   async passwordEncryption(data: string): Promise<string> {
     const salt = await bcrypt.genSalt();
     return await bcrypt.hash(data, salt);
@@ -138,9 +118,6 @@ export class UserAccountService {
     createRequest.password = await this.passwordEncryption(
       createRequest.password,
     );
-
-    await this.checkOriginType(createRequest.originTypeId);
-    await this.checkRoleType(createRequest.roleTypeId);
 
     return createRequest;
   }
@@ -177,8 +154,6 @@ export class UserAccountService {
     updateRequest.newPassword = await this.passwordEncryption(
       updateRequest.newPassword,
     );
-
-    await this.checkRoleType(updateRequest.roleTypeId);
 
     return updateRequest;
   }
