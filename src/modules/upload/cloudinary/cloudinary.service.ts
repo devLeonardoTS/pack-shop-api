@@ -1,4 +1,5 @@
 import { Injectable } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 import { ServicesException } from "@src/modules/common/exceptions/services.exception";
 import { v2 as cloudinary } from "cloudinary";
 import * as streamifier from "streamifier";
@@ -9,11 +10,13 @@ import {
 
 @Injectable()
 export class CloudinaryService {
+  constructor(private readonly config: ConfigService) {}
+
   uploadFile(file: Express.Multer.File): Promise<CloudinaryResponse> {
     return new Promise<CloudinaryResponse>((resolve, reject) => {
       const uploadStream = cloudinary.uploader.upload_stream(
         {
-          folder: "packshop",
+          folder: this.config.get("CLOUDINARY_BUCKET"),
         },
         (error, result) => {
           if (error) {
