@@ -13,7 +13,7 @@ const prisma = new PrismaClient({
 });
 
 async function main() {
-  if (process.env.NODE_ENV === "production") {
+  if (process.env.SEED_DB === "false") {
     return;
   }
 
