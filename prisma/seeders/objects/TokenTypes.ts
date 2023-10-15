@@ -1,11 +1,12 @@
 import { TokenType } from "@src/modules/token-type/entities/token-type.entity";
+import { ETokenType } from "@src/modules/token-type/enums/token-type.enum";
 
 export function createTokenTypes() {
-  const types: string[] = ["authorization"];
-
   const objects: Omit<TokenType, "id" | "createdAt">[] = [];
 
-  types.forEach((type) => objects.push({ type }));
+  Object.values(ETokenType).forEach((type) => {
+    objects.push({ type });
+  });
 
   return objects;
 }

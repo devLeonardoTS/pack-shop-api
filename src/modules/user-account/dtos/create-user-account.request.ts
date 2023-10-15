@@ -1,14 +1,15 @@
-import { Type } from "class-transformer";
-import { IsEmail, IsNotEmpty, IsOptional } from "class-validator";
+import { EAccountOriginType } from "@src/modules/account-origin-type/enums/account-origin-type.enum";
+import { EAccountRoleType } from "@src/modules/account-role-type/enums/account-role-type.enum";
+import { IsEmail, IsEnum, IsNotEmpty, IsOptional } from "class-validator";
 
 export class CreateUserAccountRequest {
   @IsNotEmpty()
-  @Type(() => Number)
-  roleTypeId: number;
+  @IsEnum(EAccountRoleType)
+  roleType: EAccountRoleType;
 
   @IsNotEmpty()
-  @Type(() => Number)
-  originTypeId: number;
+  @IsEnum(EAccountOriginType)
+  originType: EAccountOriginType;
 
   @IsNotEmpty()
   @IsEmail()

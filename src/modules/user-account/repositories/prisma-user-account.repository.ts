@@ -11,10 +11,16 @@ export class PrismaUserAccountRepository implements IUserAccountRepository {
   constructor(private readonly db: PrismaService) {}
 
   async create(createRequest: CreateUserAccountRequest): Promise<UserAccount> {
-    delete createRequest.confirmPassword;
+    const { email, originType, roleType, password } = createRequest;
 
     const created: UserAccount = await this.db.userAccount.create({
-      data: createRequest,
+      data: {
+        email,
+        password,
+        roleType: { connect: { role: roleType } },
+        originType: { connect: { origin: originType } },
+      },
+      include: { originType: true, roleType: true },
     });
 
     return created;
@@ -29,6 +35,7 @@ export class PrismaUserAccountRepository implements IUserAccountRepository {
     const list: UserAccount[] = await this.db.userAccount.findMany({
       take,
       skip,
+      include: { originType: true, roleType: true },
     });
 
     return list;
@@ -37,6 +44,7 @@ export class PrismaUserAccountRepository implements IUserAccountRepository {
   async findById(id: number): Promise<UserAccount> {
     const resource: UserAccount = await this.db.userAccount.findFirst({
       where: { id },
+      include: { originType: true, roleType: true },
     });
     return resource;
   }
@@ -53,30 +61,18 @@ export class PrismaUserAccountRepository implements IUserAccountRepository {
     id: number,
     updateReq: UpdateUserAccountRequest,
   ): Promise<UserAccount> {
-    const resource = await this.findById(id);
-    let updated: Omit<UserAccount, "originType" | "roleType"> | undefined =
-      undefined;
+    const { newPassword, roleType } = updateReq;
 
-    if (resource && !isNaN(id)) {
-      const updateTarget = resource;
-      const dataSource = updateReq;
-
-      updated = Object.keys(updateTarget).reduce((obj, key) => {
-        if (key in dataSource) {
-          obj[key] = dataSource[key];
-        } else {
-          obj[key] = updateTarget[key];
-        }
-        return obj;
-      }, updateTarget);
-
-      updated = await this.db.userAccount.update({
-        where: {
-          id,
-        },
-        data: updated,
-      });
-    }
+    const updated = await this.db.userAccount.update({
+      where: {
+        id,
+      },
+      data: {
+        password: newPassword,
+        roleType: { connect: { role: roleType } },
+      },
+      include: { originType: true, roleType: true },
+    });
 
     return updated;
   }

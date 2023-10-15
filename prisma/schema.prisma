@@ -49,7 +49,7 @@ model UserAccount {
 
   tokens Token[]
 
-  businessProfile BusinessProfile?
+  profile Profile?
 }
 
 model Token {
@@ -74,17 +74,83 @@ model TokenType {
   tokens Token[]
 }
 
-model BusinessProfile {
+model ImageType {
+  id Int @id @default(autoincrement())
+  type String @db.VarChar(255) @unique
+
+  images Image[]
+}
+
+model Image {
+  id Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  publicId String @db.VarChar(255)
+  width Int
+  height Int
+  imageUrl String @db.VarChar(255)
+
+  imageTypeId Int
+  imageType ImageType @relation(fields: [imageTypeId], references: [id])
+
+  profileImages ProfileImage[]
+}
+
+model Profile {
   id Int @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  brand String @db.VarChar(255)
   nickname String @db.VarChar(255)
-  cnpj String @db.VarChar(14) @unique  
-  pictureUrl String @db.VarChar(255)
+  description String @db.VarChar(255)
 
-  description String? @db.Text
-
-  userAccount UserAccount @relation(fields: [userAccountId], references: [id])
   userAccountId Int @unique
+  userAccount UserAccount @relation(fields: [userAccountId], references: [id])
+
+  profileImages ProfileImage[]
+
+  slug String? @db.VarChar(255) @default(uuid())
+
+  business Business?
+  consumer Consumer?
 }
+
+model ProfileImage {
+  id Int @id @default(autoincrement())
+
+  profileId Int
+  profile Profile @relation(fields: [profileId], references: [id])
+
+  imageId Int
+  image Image @relation(fields: [imageId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+model BusinessType {
+  id Int @id @default(autoincrement())
+  type String @unique
+
+  businesses Business[]
+}
+
+model Business {
+  id Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  cnpj String @db.VarChar(18)
+  brand String @db.VarChar(255)
+
+  businessTypeId Int
+  businessType BusinessType @relation(fields: [businessTypeId], references: [id])
+
+  profileId Int @unique
+  profile Profile @relation(fields: [profileId], references: [id])
+}
+
+model Consumer {
+  id Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  cpf String @db.VarChar(14)
+
+  profileId Int @unique
+  profile Profile @relation(fields: [profileId], references: [id])
+}
+
