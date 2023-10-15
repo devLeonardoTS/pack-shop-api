@@ -149,9 +149,7 @@ export class PrismaAddressRepository implements IAddressRepository {
     const primaryAddress = await this.db.address.findFirst({
       where: {
         profileId: ownerId,
-        AND: {
-          isPrimary: true,
-        },
+        isPrimary: true,
       },
     });
 

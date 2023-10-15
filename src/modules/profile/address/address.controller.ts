@@ -52,7 +52,7 @@ export class AddressController {
   async findPrimary(
     @Param("profileId", ParseIntPipe) profileId: number,
   ): Promise<Address> {
-    return this.addressService.findActive(profileId);
+    return this.addressService.findPrimary(profileId);
   }
 
   @Get(":id")

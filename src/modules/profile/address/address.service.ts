@@ -61,8 +61,8 @@ export class AddressService {
     return resource;
   }
 
-  async findActive(userAccountId: number): Promise<Address> {
-    const resource = await this.repository.findByOwnerId(userAccountId);
+  async findPrimary(userAccountId: number): Promise<Address> {
+    const resource = await this.repository.findPrimary(userAccountId);
 
     if (!resource) {
       throw new NotFoundException();
