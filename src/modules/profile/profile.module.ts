@@ -1,6 +1,10 @@
 import { Module } from "@nestjs/common";
 import { ImageModule } from "../image/image.module";
 import { UploadModule } from "../upload/upload.module";
+import { IAddressRepository } from "./address/address-repository.interface";
+import { AddressController } from "./address/address.controller";
+import { AddressService } from "./address/address.service";
+import { PrismaAddressRepository } from "./address/prisma-address.repository";
 import { BusinessService } from "./business/business-profile.service";
 import { IBusinessRepository } from "./business/business-repository.interface";
 import { BusinessController } from "./business/business.controller";
@@ -24,12 +28,14 @@ import { ProfileService } from "./profile.service";
     ProfileImageController,
     BusinessController,
     ConsumerController,
+    AddressController,
   ],
   providers: [
     ProfileService,
     ProfileImageService,
     BusinessService,
     ConsumerService,
+    AddressService,
     { provide: IProfileRepository, useClass: PrismaProfileRepository },
     {
       provide: IProfileImageRepository,
@@ -37,6 +43,7 @@ import { ProfileService } from "./profile.service";
     },
     { provide: IBusinessRepository, useClass: PrismaBusinessRepository },
     { provide: IConsumerRepository, useClass: PrismaConsumerRepository },
+    { provide: IAddressRepository, useClass: PrismaAddressRepository },
   ],
   imports: [ImageModule, UploadModule],
 })

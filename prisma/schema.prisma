@@ -93,6 +93,7 @@ model Image {
   imageType ImageType @relation(fields: [imageTypeId], references: [id])
 
   profileImages ProfileImage[]
+  productImages ProductImage[]
 }
 
 model Profile {
@@ -105,12 +106,14 @@ model Profile {
   userAccountId Int @unique
   userAccount UserAccount @relation(fields: [userAccountId], references: [id])
 
-  profileImages ProfileImage[]
-
   slug String? @db.VarChar(255) @default(uuid())
 
   business Business?
   consumer Consumer?
+
+  addresses Address[]
+  profileImages ProfileImage[]
+  products Product[]
 }
 
 model ProfileImage {
@@ -154,3 +157,114 @@ model Consumer {
   profile Profile @relation(fields: [profileId], references: [id])
 }
 
+model Address {
+  id Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  cep String @db.VarChar(255)
+  logradouro String @db.VarChar(255)
+  numero String @db.VarChar(255)
+  bairro String @db.VarChar(255)
+  cidade String @db.VarChar(255)
+  estado String @db.VarChar(255)
+  pais String @db.VarChar(255)
+
+  isPrimary Boolean @default(true)
+
+  title String @db.VarChar(255)
+  description String @db.VarChar(255)
+
+  profileId Int
+  profile Profile @relation(fields: [profileId], references: [id])
+}
+
+model Tag {
+  id Int @id @default(autoincrement())
+  tag String @unique
+
+  hits Int @default(0)
+
+  productTags ProductTag[]
+}
+
+model Category {
+  id Int @id @default(autoincrement())
+  category String @unique
+
+  productCategories ProductCategory[]
+}
+
+model ProductType {
+  id Int @id @default(autoincrement())
+  type String @unique
+
+  products Product[]
+}
+
+model Product {
+  id Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  sku String @unique @db.VarChar(255)
+  name String @db.VarChar(255)
+  description String @db.Text()
+  brand String @db.VarChar(255)
+  price Decimal @db.Decimal(10, 2)
+  stock Int @db.Integer() 
+  
+  weightKg Decimal @db.Decimal(10, 2)
+
+  lengthCm Decimal @db.Decimal(10, 2)
+  heightCm Decimal @db.Decimal(10, 2)
+  widthCm Decimal @db.Decimal(10, 2)
+
+  manufacturedAt DateTime
+  expiresAt DateTime
+  
+  isAvailable Boolean @default(false)
+
+  slug String? @db.VarChar(255) @default(uuid())
+
+  productTypeId Int
+  productType ProductType @relation(fields: [productTypeId], references: [id])
+
+  profileId Int
+  profile Profile @relation(fields: [profileId], references: [id]) 
+
+  productImages ProductImage[]
+  productCategories ProductCategory[]
+  productTags ProductTag[]
+
+}
+
+model ProductCategory {
+  id Int @id @default(autoincrement())
+
+  productId Int
+  product Product @relation(fields: [productId], references: [id])
+
+  categoryId Int
+  category Category @relation(fields: [categoryId], references: [id])
+}
+
+model ProductImage {
+  id Int @id @default(autoincrement())
+
+  productId Int
+  product Product @relation(fields: [productId], references: [id])
+
+  imageId Int
+  image Image @relation(fields: [imageId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+model ProductTag {
+  id Int @id @default(autoincrement())
+
+  productId Int
+  product Product @relation(fields: [productId], references: [id])
+
+  tagId Int
+  tag Tag @relation(fields: [tagId], references: [id])
+}
