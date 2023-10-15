@@ -11,6 +11,7 @@ export interface IAddressRepository {
   ): Promise<Address[]>;
   findById(id: number): Promise<Address>;
   findByOwnerId(ownerId: number): Promise<Address>;
+  findPrimary(ownerId: number): Promise<Address>;
   update(id: number, updateReq: UpdateAddressRequest): Promise<Address>;
   remove(id: number): Promise<Address>;
   countAll(): Promise<number>;

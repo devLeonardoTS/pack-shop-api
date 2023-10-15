@@ -61,6 +61,16 @@ export class AddressService {
     return resource;
   }
 
+  async findActive(userAccountId: number): Promise<Address> {
+    const resource = await this.repository.findByOwnerId(userAccountId);
+
+    if (!resource) {
+      throw new NotFoundException();
+    }
+
+    return resource;
+  }
+
   async update(
     id: number,
     updateRequest: UpdateAddressRequest,

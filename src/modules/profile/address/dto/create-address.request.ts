@@ -42,7 +42,7 @@ export class CreateAddressRequest {
   @IsNotEmpty()
   @IsString()
   @MaxLength(2)
-  @Transform((p) => String(p.value).toUpperCase())
+  @Transform(({ value }) => String(value).toUpperCase())
   estado: string;
 
   @IsOptional()

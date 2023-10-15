@@ -48,6 +48,13 @@ export class AddressController {
     return this.addressService.findByOwnerId(profileId);
   }
 
+  @Get("primary")
+  async findPrimary(
+    @Param("profileId", ParseIntPipe) profileId: number,
+  ): Promise<Address> {
+    return this.addressService.findActive(profileId);
+  }
+
   @Get(":id")
   async findById(@Param("id", ParseIntPipe) id: number): Promise<Address> {
     return this.addressService.findById(id);

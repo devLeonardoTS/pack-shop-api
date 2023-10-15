@@ -25,7 +25,7 @@ export class PrismaAddressRepository implements IAddressRepository {
       profileId,
     } = createRequest;
 
-    const primaryAddress = await this.findPrimaryAddress(createRequest);
+    const primaryAddress = await this.findPrimary(createRequest.profileId);
 
     if (primaryAddress) {
       const updateRequest = { ...createRequest, isPrimary: false };
@@ -104,7 +104,7 @@ export class PrismaAddressRepository implements IAddressRepository {
       profileId,
     } = updateReq;
 
-    const primaryAddress = await this.findPrimaryAddress(updateReq);
+    const primaryAddress = await this.findPrimary(updateReq.profileId);
 
     if (primaryAddress && isPrimary) {
       const updateRequest = { ...updateReq, isPrimary: false };
@@ -141,12 +141,14 @@ export class PrismaAddressRepository implements IAddressRepository {
     return await this.db.address.count();
   }
 
-  async findPrimaryAddress(
-    request: CreateAddressRequest | UpdateAddressRequest,
-  ): Promise<Address> {
+  async findByQuery(request: Record<string, string>[]): Promise<Address> {
+    return null;
+  }
+
+  async findPrimary(ownerId: number): Promise<Address> {
     const primaryAddress = await this.db.address.findFirst({
       where: {
-        profileId: request.profileId,
+        profileId: ownerId,
         AND: {
           isPrimary: true,
         },
