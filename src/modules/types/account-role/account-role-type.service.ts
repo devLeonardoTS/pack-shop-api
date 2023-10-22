@@ -1,10 +1,10 @@
 import { Inject, Injectable, NotFoundException } from "@nestjs/common";
-import { PaginationQuery } from "@src/modules/common/dtos/pagination.query";
+import { AccountRoleType } from "@prisma/client";
+import { CommonQuery } from "@src/modules/common/dtos/common.query";
 import { PaginationResponse } from "@src/modules/common/dtos/pagination.response";
-import { CreateAccountRoleTypeRequest } from "../dtos/create-account-role-type.request";
-import { UpdateAccountRoleTypeRequest } from "../dtos/update-account-role-type.request";
-import { AccountRoleType } from "../entities/account-role-type.entity";
-import { IAccountRoleTypeRepository } from "../interfaces/account-role-type-repository.interface";
+import { IAccountRoleTypeRepository } from "./account-role-type-repository.interface";
+import { CreateAccountRoleTypeRequest } from "./dtos/create-account-role-type.request";
+import { UpdateAccountRoleTypeRequest } from "./dtos/update-account-role-type.request";
 
 @Injectable()
 export class AccountRoleTypeService {
@@ -21,15 +21,18 @@ export class AccountRoleTypeService {
   }
 
   async findMany(
-    paginatedRequest: PaginationQuery,
+    commonQuery: CommonQuery<AccountRoleType>,
   ): Promise<PaginationResponse<AccountRoleType>> {
-    const { page, limit } = paginatedRequest;
+    const {
+      pagination: { limit, page },
+      filters,
+    } = commonQuery;
 
-    const total = await this.repository.countAll();
+    const total = await this.repository.countAll(filters);
     const pages = Math.ceil(total / limit);
     const previous = page > 1 && page <= pages;
     const next = pages > 1 && page < pages;
-    const data = await this.repository.findMany(paginatedRequest);
+    const data = await this.repository.findMany(commonQuery);
 
     const result: PaginationResponse<AccountRoleType> = {
       total,

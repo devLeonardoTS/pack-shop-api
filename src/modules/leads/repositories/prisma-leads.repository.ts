@@ -11,7 +11,8 @@ export class PrismaLeadsRepository implements ILeadsRepository {
   constructor(private readonly db: PrismaService) {}
 
   async create(createRequest: CreateLeadRequest): Promise<Lead> {
-    const created: Lead = await this.db.lead.create({ data: createRequest });
+    const { email } = createRequest;
+    const created: Lead = await this.db.lead.create({ data: { email } });
     return created;
   }
   async findMany(commonQuery: CommonQuery<Lead>): Promise<Lead[]> {

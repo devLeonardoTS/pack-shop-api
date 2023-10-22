@@ -14,6 +14,7 @@ import { PrismaAccountOriginTypeRepository } from "./prisma-account-origin-type.
       useClass: PrismaAccountOriginTypeRepository,
     },
   ],
+  exports: [AccountOriginTypeService],
   imports: [UserAccountModule],
 })
 export class AccountOriginTypeModule {}

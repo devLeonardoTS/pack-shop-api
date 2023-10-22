@@ -1,4 +1,4 @@
-import { EAccountRoleType } from "@src/modules/account-role-type/enums/account-role-type.enum";
+import { EAccountRoleType } from "@src/modules/types/account-role/account-role-type.enum";
 import { Type } from "class-transformer";
 import { IsBoolean, IsEnum, IsNotEmpty, IsOptional } from "class-validator";
 

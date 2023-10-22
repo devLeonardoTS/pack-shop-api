@@ -1,5 +1,5 @@
-import { AccountRoleType } from "@src/modules/account-role-type/entities/account-role-type.entity";
-import { EAccountRoleType } from "@src/modules/account-role-type/enums/account-role-type.enum";
+import { AccountRoleType } from "@prisma/client";
+import { EAccountRoleType } from "@src/modules/types/account-role/account-role-type.enum";
 
 export function createAccountRoleTypes() {
   const objects: Omit<AccountRoleType, "id" | "createdAt">[] = [];

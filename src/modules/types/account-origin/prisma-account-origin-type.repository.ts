@@ -11,30 +11,13 @@ export class PrismaAccountOriginTypeRepository
   implements IAccountOriginTypeRepository
 {
   constructor(private readonly db: PrismaService) {}
-  findManyUserAccounts(
-    parentId: number,
-    commonQuery: CommonQuery<{ id: number; createdAt: Date; origin: string }>,
-  ): Promise<
-    {
-      id: number;
-      createdAt: Date;
-      updatedAt: Date;
-      isActive: boolean;
-      isConfirmed: boolean;
-      email: string;
-      password: string;
-      roleTypeId: number;
-      originTypeId: number;
-    }[]
-  > {
-    throw new Error("Method not implemented.");
-  }
 
   async create(
     createRequest: CreateAccountOriginTypeRequest,
   ): Promise<AccountOriginType> {
+    const { origin } = createRequest;
     const created: AccountOriginType = await this.db.accountOriginType.create({
-      data: createRequest,
+      data: { origin },
     });
     return created;
   }

@@ -9,17 +9,19 @@ import {
   Put,
   Query,
 } from "@nestjs/common";
-import { PaginationQuery } from "@src/modules/common/dtos/pagination.query";
+import { AccountRoleType, UserAccount } from "@prisma/client";
+import { CommonQuery } from "@src/modules/common/dtos/common.query";
 import { PaginationResponse } from "@src/modules/common/dtos/pagination.response";
-import { CreateAccountRoleTypeRequest } from "../dtos/create-account-role-type.request";
-import { UpdateAccountRoleTypeRequest } from "../dtos/update-account-role-type.request";
-import { AccountRoleType } from "../entities/account-role-type.entity";
-import { AccountRoleTypeService } from "../services/account-role-type.service";
+import { UserAccountService } from "@src/modules/user-account/services/user-account.service";
+import { AccountRoleTypeService } from "./account-role-type.service";
+import { CreateAccountRoleTypeRequest } from "./dtos/create-account-role-type.request";
+import { UpdateAccountRoleTypeRequest } from "./dtos/update-account-role-type.request";
 
-@Controller("account-role-type")
+@Controller("types/account-role")
 export class AccountRoleTypeController {
   constructor(
     private readonly accountRoleTypeService: AccountRoleTypeService,
+    private readonly userAccountService: UserAccountService,
   ) {}
 
   @Post()
@@ -31,7 +33,7 @@ export class AccountRoleTypeController {
 
   @Get()
   async findMany(
-    @Query() query: PaginationQuery,
+    @Query() query: CommonQuery<AccountRoleType>,
   ): Promise<PaginationResponse<AccountRoleType>> {
     const result = await this.accountRoleTypeService.findMany(query);
     return result;
@@ -57,5 +59,15 @@ export class AccountRoleTypeController {
     @Param("id", ParseIntPipe) id: number,
   ): Promise<AccountRoleType> {
     return await this.accountRoleTypeService.remove(id);
+  }
+
+  @Get(":id/user-account")
+  async findManyUserAccounts(
+    @Param("id", ParseIntPipe) id: number,
+    @Query() query: CommonQuery<UserAccount>,
+  ): Promise<PaginationResponse<UserAccount>> {
+    query.filters.roleTypeId = id;
+    const result = await this.userAccountService.findMany(query);
+    return result;
   }
 }
