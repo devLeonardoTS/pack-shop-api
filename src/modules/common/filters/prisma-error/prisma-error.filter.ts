@@ -1,5 +1,6 @@
 import {
   ArgumentsHost,
+  BadRequestException,
   Catch,
   ConflictException,
   ExceptionFilter,
@@ -27,6 +28,18 @@ export class PrismaClientErrorFilter implements ExceptionFilter {
         error = new NotFoundException();
         return response.status(error.getStatus()).json(error.getResponse());
       default:
+        if (exception.message.includes("Invalid value provided")) {
+          error = new BadRequestException(
+            "Invalid value provided, check model schema.",
+          );
+          return response.status(error.getStatus()).json(error.getResponse());
+        }
+        if (exception.message.includes("Unknown argument")) {
+          error = new BadRequestException(
+            "Unknown value provided, check model schema.",
+          );
+          return response.status(error.getStatus()).json(error.getResponse());
+        }
         console.error(exception);
         error = new DatabaseException();
         const errorResponse = error.getResponse();

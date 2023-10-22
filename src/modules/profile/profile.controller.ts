@@ -12,6 +12,7 @@ import {
   UseGuards,
 } from "@nestjs/common";
 import { Business, Consumer, Profile } from "@prisma/client";
+import PrismaService from "@src/databases/prisma/prisma.service";
 import { PaginationQuery } from "@src/modules/common/dtos/pagination.query";
 import { PaginationResponse } from "@src/modules/common/dtos/pagination.response";
 import { EAccountRoleType } from "../account-role-type/enums/account-role-type.enum";
@@ -30,7 +31,20 @@ export class ProfileController {
     private readonly businessService: BusinessService,
     private readonly consumerService: ConsumerService,
     private readonly profileImageService: ProfileImageService,
+    private readonly db: PrismaService,
   ) {}
+
+  // @Get("test")
+  // async test(@Query() query: CommonQuery) {
+  //   return await this.db.profile
+  //     .findMany({
+  //       where: query.filters,
+  //       orderBy: query.orderBy,
+  //     })
+  //     .catch(() => {
+  //       throw new NotFoundException();
+  //     });
+  // }
 
   @UseGuards(JwtAuthGuard)
   @Post()

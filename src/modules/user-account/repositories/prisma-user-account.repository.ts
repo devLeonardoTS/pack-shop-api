@@ -44,7 +44,22 @@ export class PrismaUserAccountRepository implements IUserAccountRepository {
   async findById(id: number): Promise<UserAccount> {
     const resource: UserAccount = await this.db.userAccount.findFirst({
       where: { id },
-      include: { originType: true, roleType: true },
+      include: {
+        originType: true,
+        roleType: true,
+        profile: {
+          include: {
+            business: { include: { businessType: true } },
+            consumer: true,
+            addresses: true,
+            profileImages: {
+              where: {
+                image: { imageType: { type: { contains: "AVATAR " } } },
+              },
+            },
+          },
+        },
+      },
     });
     return resource;
   }
@@ -52,7 +67,22 @@ export class PrismaUserAccountRepository implements IUserAccountRepository {
   async findByEmail(email: string): Promise<UserAccount> {
     const resource: UserAccount = await this.db.userAccount.findFirst({
       where: { email },
-      include: { originType: true, roleType: true },
+      include: {
+        originType: true,
+        roleType: true,
+        profile: {
+          include: {
+            business: { include: { businessType: true } },
+            consumer: true,
+            addresses: true,
+            profileImages: {
+              where: {
+                image: { imageType: { type: { contains: "AVATAR " } } },
+              },
+            },
+          },
+        },
+      },
     });
     return resource;
   }
@@ -71,7 +101,22 @@ export class PrismaUserAccountRepository implements IUserAccountRepository {
         password: newPassword,
         roleType: { connect: { role: roleType } },
       },
-      include: { originType: true, roleType: true },
+      include: {
+        originType: true,
+        roleType: true,
+        profile: {
+          include: {
+            business: { include: { businessType: true } },
+            consumer: true,
+            addresses: true,
+            profileImages: {
+              where: {
+                image: { imageType: { type: { contains: "AVATAR " } } },
+              },
+            },
+          },
+        },
+      },
     });
 
     return updated;
