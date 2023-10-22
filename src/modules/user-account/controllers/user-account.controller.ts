@@ -9,7 +9,7 @@ import {
   Put,
   Query,
 } from "@nestjs/common";
-import { PaginationQuery } from "@src/modules/common/dtos/pagination.query";
+import { CommonQuery } from "@src/modules/common/dtos/common.query";
 import { PaginationResponse } from "@src/modules/common/dtos/pagination.response";
 import { CreateUserAccountRequest } from "../dtos/create-user-account.request";
 import { UpdateUserAccountRequest } from "../dtos/update-user-account.request";
@@ -29,7 +29,7 @@ export class UserAccountController {
 
   @Get()
   async findMany(
-    @Query() query: PaginationQuery,
+    @Query() query: CommonQuery<UserAccount>,
   ): Promise<PaginationResponse<UserAccount>> {
     const result = await this.userAccountService.findMany(query);
     return result;

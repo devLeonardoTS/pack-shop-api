@@ -1,9 +1,9 @@
 import { Injectable } from "@nestjs/common";
+import { UserAccount } from "@prisma/client";
 import PrismaService from "@src/databases/prisma/prisma.service";
-import { PaginationQuery } from "@src/modules/common/dtos/pagination.query";
+import { CommonQuery } from "@src/modules/common/dtos/common.query";
 import { CreateUserAccountRequest } from "../dtos/create-user-account.request";
 import { UpdateUserAccountRequest } from "../dtos/update-user-account.request";
-import { UserAccount } from "../entities/user-account.entity";
 import { IUserAccountRepository } from "../interfaces/user-account-repository.interface";
 
 @Injectable()
@@ -26,8 +26,14 @@ export class PrismaUserAccountRepository implements IUserAccountRepository {
     return created;
   }
 
-  async findMany(paginationQuery: PaginationQuery): Promise<UserAccount[]> {
-    const { page, limit } = paginationQuery;
+  async findMany(
+    commonQuery: CommonQuery<UserAccount>,
+  ): Promise<UserAccount[]> {
+    const {
+      pagination: { limit, page },
+      filters,
+      orderBy,
+    } = commonQuery;
 
     const take = limit;
     const skip = (page - 1) * limit;
@@ -35,6 +41,8 @@ export class PrismaUserAccountRepository implements IUserAccountRepository {
     const list: UserAccount[] = await this.db.userAccount.findMany({
       take,
       skip,
+      where: filters,
+      orderBy,
       include: { originType: true, roleType: true },
     });
 
@@ -91,7 +99,7 @@ export class PrismaUserAccountRepository implements IUserAccountRepository {
     id: number,
     updateReq: UpdateUserAccountRequest,
   ): Promise<UserAccount> {
-    const { newPassword, roleType } = updateReq;
+    const { newPassword, roleType, isActive, isConfirmed } = updateReq;
 
     const updated = await this.db.userAccount.update({
       where: {
@@ -99,6 +107,8 @@ export class PrismaUserAccountRepository implements IUserAccountRepository {
       },
       data: {
         password: newPassword,
+        isActive,
+        isConfirmed,
         roleType: { connect: { role: roleType } },
       },
       include: {
@@ -127,7 +137,7 @@ export class PrismaUserAccountRepository implements IUserAccountRepository {
     return removed;
   }
 
-  async countAll(): Promise<number> {
-    return await this.db.userAccount.count();
+  async countAll(filters: Partial<UserAccount>): Promise<number> {
+    return await this.db.userAccount.count({ where: filters });
   }
 }

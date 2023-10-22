@@ -1,5 +1,5 @@
-import { AccountOriginType } from "@src/modules/account-origin-type/entities/account-origin-type.entity";
-import { EAccountOriginType } from "@src/modules/account-origin-type/enums/account-origin-type.enum";
+import { AccountOriginType } from "@prisma/client";
+import { EAccountOriginType } from "@src/modules/types/account-origin/account-origin-type.enum";
 
 export function createAccountOriginTypes() {
   const objects: Omit<AccountOriginType, "id" | "createdAt">[] = [];

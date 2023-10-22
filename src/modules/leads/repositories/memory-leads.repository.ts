@@ -1,6 +1,6 @@
 import { faker } from "@faker-js/faker";
 import { Injectable } from "@nestjs/common";
-import { PaginationQuery } from "@src/modules/common/dtos/pagination.query";
+import { CommonQuery } from "@src/modules/common/dtos/common.query";
 import { CreateLeadRequest } from "../dtos/create-lead.request";
 import { UpdateLeadRequest } from "../dtos/update-lead.request";
 import { Lead } from "../entities/lead.entity";
@@ -41,8 +41,10 @@ export class MemoryLeadsRepository implements ILeadsRepository {
     this.leads.push(created);
     return created;
   }
-  async findMany(paginationQuery: PaginationQuery): Promise<Lead[]> {
-    const { page, limit } = paginationQuery;
+  async findMany(commonQuery: CommonQuery<Lead>): Promise<Lead[]> {
+    const {
+      pagination: { limit, page },
+    } = commonQuery;
 
     const take = limit;
     const skip = (page - 1) * limit;
@@ -88,7 +90,7 @@ export class MemoryLeadsRepository implements ILeadsRepository {
     });
     return target;
   }
-  async countAll(): Promise<number> {
+  async countAll(filters: Partial<Lead>): Promise<number> {
     return this.leads.length;
   }
 }

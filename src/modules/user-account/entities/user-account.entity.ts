@@ -1,5 +1,4 @@
-import { AccountOriginType } from "@src/modules/account-origin-type/entities/account-origin-type.entity";
-import { AccountRoleType } from "@src/modules/account-role-type/entities/account-role-type.entity";
+import { AccountOriginType, AccountRoleType } from "@prisma/client";
 
 export class UserAccount {
   id: number;

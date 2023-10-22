@@ -94,5 +94,5 @@ export class CreateProductRequest {
 
   @IsOptional()
   @IsString()
-  profileId?: number;
+  businessId?: number;
 }

@@ -62,7 +62,7 @@ export class ProfileProductController {
     @Param("profileId", ParseIntPipe) profileId: number,
     @Body() createRequest: CreateProductRequest,
   ): Promise<Product> {
-    createRequest.profileId = profileId;
+    createRequest.businessId = profileId;
     return await this.productService.create(createRequest);
   }
 

@@ -3,14 +3,14 @@ import { IsNumber, IsOptional, Min } from "class-validator";
 
 export class PaginationQuery {
   @IsOptional()
-  @Transform(({ value }) => Number.parseInt(value))
+  @Transform(({ value }) => Math.abs(Number.parseInt(value) || 1))
   @IsNumber()
   @Min(1)
-  page?: number = 1;
+  page?: number;
 
   @IsOptional()
-  @Transform(({ value }) => Number.parseInt(value))
+  @Transform(({ value }) => Math.abs(Number.parseInt(value) || 10))
   @IsNumber()
   @Min(1)
-  limit?: number = 10;
+  limit?: number;
 }

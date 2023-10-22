@@ -11,13 +11,12 @@ export class PrismaProfileRepository implements IProfileRepository {
   constructor(private readonly db: PrismaService) {}
 
   async create(createRequest: CreateProfileRequest): Promise<Profile> {
-    const { userAccountId, description, nickname } = createRequest;
+    const { isSubscribedToOffers, slug, userAccountId } = createRequest;
 
     const created = await this.db.profile.create({
       data: {
         userAccountId,
-        description,
-        nickname,
+        isSubscribedToOffers,
       },
       include: {
         business: {
@@ -73,15 +72,14 @@ export class PrismaProfileRepository implements IProfileRepository {
   }
 
   async update(id: number, updateReq: UpdateProfileRequest): Promise<Profile> {
-    const { description, nickname, slug } = updateReq;
+    const { isSubscribedToOffers, slug } = updateReq;
 
     return await this.db.profile.update({
       where: {
         id,
       },
       data: {
-        nickname,
-        description,
+        isSubscribedToOffers,
         slug,
       },
       include: {

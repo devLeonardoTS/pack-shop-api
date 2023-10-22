@@ -10,7 +10,7 @@ import {
   Query,
   UseFilters,
 } from "@nestjs/common";
-import { PaginationQuery } from "@src/modules/common/dtos/pagination.query";
+import { CommonQuery } from "@src/modules/common/dtos/common.query";
 import { PaginationResponse } from "@src/modules/common/dtos/pagination.response";
 import { PrismaErrorFilter } from "@src/modules/common/filters/prisma-error/prisma-error.filter";
 import { CreateLeadRequest } from "../dtos/create-lead.request";
@@ -30,7 +30,7 @@ export class LeadsControllerV1 {
 
   @Get()
   async findMany(
-    @Query() query: PaginationQuery,
+    @Query() query: CommonQuery<Lead>,
   ): Promise<PaginationResponse<Lead>> {
     const result = await this.leadsService.findMany(query);
     return result;

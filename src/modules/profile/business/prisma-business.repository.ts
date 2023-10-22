@@ -15,14 +15,27 @@ export class PrismaBusinessRepository implements IBusinessRepository {
   ) {}
 
   async create(createRequest: CreateBusinessRequest): Promise<Business> {
-    const { brand, businessType, cnpj, profileId } = createRequest;
+    const {
+      cnpj,
+      razaoSocial,
+      nomeFantasia,
+      inscricaoMunicipal,
+      inscricaoEstadual,
+      dataAbertura,
+      businessType,
+      profileId,
+    } = createRequest;
 
     await this.checkAlreadySpecialized(profileId);
 
     const created = await this.db.business.create({
       data: {
-        brand,
         cnpj,
+        razaoSocial,
+        nomeFantasia,
+        inscricaoMunicipal,
+        inscricaoEstadual,
+        dataAbertura,
         profile: {
           connect: {
             id: profileId,
@@ -76,15 +89,27 @@ export class PrismaBusinessRepository implements IBusinessRepository {
     id: number,
     updateReq: UpdateBusinessRequest,
   ): Promise<Business> {
-    const { brand, businessType, cnpj, profileId } = updateReq;
+    const {
+      cnpj,
+      razaoSocial,
+      nomeFantasia,
+      inscricaoMunicipal,
+      inscricaoEstadual,
+      dataAbertura,
+      businessType,
+    } = updateReq;
 
     return await this.db.business.update({
       where: {
         id,
       },
       data: {
-        brand,
         cnpj,
+        razaoSocial,
+        nomeFantasia,
+        inscricaoMunicipal,
+        inscricaoEstadual,
+        dataAbertura,
         businessType: { connect: { type: businessType } },
       },
       include: {

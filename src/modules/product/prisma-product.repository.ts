@@ -28,7 +28,7 @@ export class PrismaProductRepository implements IProductRepository {
       weightKg,
       widthCm,
       isAvailable,
-      profileId,
+      businessId,
       slug,
     } = createRequest;
 
@@ -70,9 +70,9 @@ export class PrismaProductRepository implements IProductRepository {
             type: productType,
           },
         },
-        profile: {
+        business: {
           connect: {
-            id: profileId,
+            id: businessId,
           },
         },
       },
@@ -122,7 +122,7 @@ export class PrismaProductRepository implements IProductRepository {
   }
 
   async findManyFromOwner(
-    profileId: number,
+    businessId: number,
     paginationQuery: PaginationQuery,
   ): Promise<Product[]> {
     const { page, limit } = paginationQuery;
@@ -134,7 +134,7 @@ export class PrismaProductRepository implements IProductRepository {
       take,
       skip,
       where: {
-        profileId,
+        businessId,
       },
       include: {
         productCategories: {
@@ -174,9 +174,9 @@ export class PrismaProductRepository implements IProductRepository {
     return item;
   }
 
-  async findByOwnerId(profileId: number): Promise<Product> {
+  async findByOwnerId(businessId: number): Promise<Product> {
     const item: Product = await this.db.product.findFirst({
-      where: { profileId },
+      where: { businessId },
       include: {
         productCategories: {
           include: {
@@ -212,7 +212,7 @@ export class PrismaProductRepository implements IProductRepository {
       weightKg,
       widthCm,
       isAvailable,
-      profileId,
+      businessId,
       slug,
     } = updateReq;
 
@@ -257,9 +257,9 @@ export class PrismaProductRepository implements IProductRepository {
             type: productType,
           },
         },
-        profile: {
+        business: {
           connect: {
-            id: profileId,
+            id: businessId,
           },
         },
       },

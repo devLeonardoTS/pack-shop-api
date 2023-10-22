@@ -9,17 +9,19 @@ import {
   Put,
   Query,
 } from "@nestjs/common";
-import { PaginationQuery } from "@src/modules/common/dtos/pagination.query";
+import { AccountOriginType, UserAccount } from "@prisma/client";
+import { CommonQuery } from "@src/modules/common/dtos/common.query";
 import { PaginationResponse } from "@src/modules/common/dtos/pagination.response";
-import { CreateAccountOriginTypeRequest } from "../dtos/create-account-origin-type.request";
-import { UpdateAccountOriginTypeRequest } from "../dtos/update-account-origin-type.request";
-import { AccountOriginType } from "../entities/account-origin-type.entity";
-import { AccountOriginTypeService } from "../services/account-origin-type.service";
+import { UserAccountService } from "@src/modules/user-account/services/user-account.service";
+import { AccountOriginTypeService } from "./account-origin-type.service";
+import { CreateAccountOriginTypeRequest } from "./dtos/create-account-origin-type.request";
+import { UpdateAccountOriginTypeRequest } from "./dtos/update-account-origin-type.request";
 
-@Controller("account-origin-type")
+@Controller("types/account-origin")
 export class AccountOriginTypeController {
   constructor(
     private readonly accountOriginTypeService: AccountOriginTypeService,
+    private readonly userAccountService: UserAccountService,
   ) {}
 
   @Post()
@@ -31,7 +33,7 @@ export class AccountOriginTypeController {
 
   @Get()
   async findMany(
-    @Query() query: PaginationQuery,
+    @Query() query: CommonQuery<AccountOriginType>,
   ): Promise<PaginationResponse<AccountOriginType>> {
     const result = await this.accountOriginTypeService.findMany(query);
     return result;
@@ -57,5 +59,15 @@ export class AccountOriginTypeController {
     @Param("id", ParseIntPipe) id: number,
   ): Promise<AccountOriginType> {
     return await this.accountOriginTypeService.remove(id);
+  }
+
+  @Get(":id/user-account")
+  async findManyUserAccounts(
+    @Param("id", ParseIntPipe) id: number,
+    @Query() query: CommonQuery<UserAccount>,
+  ): Promise<PaginationResponse<UserAccount>> {
+    query.filters.roleTypeId = id;
+    const result = await this.userAccountService.findMany(query);
+    return result;
   }
 }

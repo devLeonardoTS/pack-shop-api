@@ -1,6 +1,7 @@
 import { EBusinessType } from "@src/modules/business-type/enums/business-type.enum";
 import { Type } from "class-transformer";
 import {
+  IsDate,
   IsEnum,
   IsNotEmpty,
   IsNumber,
@@ -15,7 +16,24 @@ export class CreateBusinessRequest {
 
   @IsNotEmpty()
   @IsString()
-  brand: string;
+  razaoSocial: string;
+
+  @IsNotEmpty()
+  @IsString()
+  nomeFantasia: string;
+
+  @IsNotEmpty()
+  @IsString()
+  inscricaoMunicipal: string;
+
+  @IsNotEmpty()
+  @IsString()
+  inscricaoEstadual: string;
+
+  @IsNotEmpty()
+  @Type(() => Date)
+  @IsDate()
+  dataAbertura: Date;
 
   @IsNotEmpty()
   @IsEnum(EBusinessType)

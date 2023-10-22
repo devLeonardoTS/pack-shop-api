@@ -6,7 +6,6 @@ import {
 } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config/dist";
 import { GlobalServicesModule } from "./global-services.module";
-import { AccountOriginTypeModule } from "./modules/account-origin-type/account-origin-type.module";
 import { AccountRoleTypeModule } from "./modules/account-role-type/account-role-type.module";
 import { AuthModule } from "./modules/auth/auth.module";
 import { BusinessTypeModule } from "./modules/business-type/business-type.module";
@@ -18,6 +17,7 @@ import { LeadsModule } from "./modules/leads/leads.module";
 import { ProductModule } from "./modules/product/product.module";
 import { ProfileModule } from "./modules/profile/profile.module";
 import { TokenTypeModule } from "./modules/token-type/token-type.module";
+import { AccountOriginTypeModule } from "./modules/types/account-origin/account-origin-type.module";
 import { UploadModule } from "./modules/upload/upload.module";
 import { UserAccountModule } from "./modules/user-account/user-account.module";
 

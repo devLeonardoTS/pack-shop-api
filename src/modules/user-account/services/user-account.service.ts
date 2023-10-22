@@ -5,14 +5,12 @@ import {
   NotFoundException,
 } from "@nestjs/common";
 import { UnauthorizedException } from "@nestjs/common/exceptions";
-import { AccountOriginTypeService } from "@src/modules/account-origin-type/services/account-origin-type.service";
-import { AccountRoleTypeService } from "@src/modules/account-role-type/services/account-role-type.service";
-import { PaginationQuery } from "@src/modules/common/dtos/pagination.query";
+import { UserAccount } from "@prisma/client";
+import { CommonQuery } from "@src/modules/common/dtos/common.query";
 import { PaginationResponse } from "@src/modules/common/dtos/pagination.response";
 import * as bcrypt from "bcrypt";
 import { CreateUserAccountRequest } from "../dtos/create-user-account.request";
 import { UpdateUserAccountRequest } from "../dtos/update-user-account.request";
-import { UserAccount } from "../entities/user-account.entity";
 import { IUserAccountRepository } from "../interfaces/user-account-repository.interface";
 
 @Injectable()
@@ -20,8 +18,6 @@ export class UserAccountService {
   constructor(
     @Inject(IUserAccountRepository)
     private readonly userAccountRepository: IUserAccountRepository,
-    private readonly accountOriginTypeService: AccountOriginTypeService,
-    private readonly accountRoleTypeService: AccountRoleTypeService,
   ) {}
 
   async create(createRequest: CreateUserAccountRequest): Promise<UserAccount> {
@@ -33,15 +29,18 @@ export class UserAccountService {
   }
 
   async findMany(
-    paginatedRequest: PaginationQuery,
+    commonQuery: CommonQuery<UserAccount>,
   ): Promise<PaginationResponse<UserAccount>> {
-    const { page, limit } = paginatedRequest;
+    const {
+      pagination: { limit, page },
+      filters,
+    } = commonQuery;
 
-    const total = await this.userAccountRepository.countAll();
+    const total = await this.userAccountRepository.countAll(filters);
     const pages = Math.ceil(total / limit);
     const previous = page > 1 && page <= pages;
     const next = pages > 1 && page < pages;
-    const data = await this.userAccountRepository.findMany(paginatedRequest);
+    const data = await this.userAccountRepository.findMany(commonQuery);
 
     const result: PaginationResponse<UserAccount> = {
       total,

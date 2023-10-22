@@ -15,13 +15,16 @@ export class PrismaConsumerRepository implements IConsumerRepository {
   ) {}
 
   async create(createRequest: CreateConsumerRequest): Promise<Consumer> {
-    const { cpf, profileId } = createRequest;
+    const { cpf, fullName, birthDate, socialName, profileId } = createRequest;
 
     await this.checkAlreadySpecialized(profileId);
 
     const created = await this.db.consumer.create({
       data: {
         cpf,
+        fullName,
+        birthDate,
+        socialName,
         profile: {
           connect: {
             id: profileId,
@@ -65,7 +68,7 @@ export class PrismaConsumerRepository implements IConsumerRepository {
     id: number,
     updateReq: UpdateConsumerRequest,
   ): Promise<Consumer> {
-    const { cpf, profileId } = updateReq;
+    const { cpf, fullName, birthDate, socialName, profileId } = updateReq;
 
     return await this.db.consumer.update({
       where: {
@@ -73,6 +76,9 @@ export class PrismaConsumerRepository implements IConsumerRepository {
       },
       data: {
         cpf,
+        fullName,
+        birthDate,
+        socialName,
       },
     });
   }
