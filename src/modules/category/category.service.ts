@@ -1,10 +1,10 @@
 import { Inject, Injectable, NotFoundException } from "@nestjs/common";
 import { Category } from "@prisma/client";
-import { PaginationQuery } from "@src/modules/common/dtos/pagination.query";
+import { CommonQuery } from "@src/modules/common/dtos/common.query";
 import { PaginationResponse } from "@src/modules/common/dtos/pagination.response";
 import { ICategoryRepository } from "./category-repository.interface";
-import { CreateCategoryRequest } from "./dto/create-category.request";
-import { UpdateCategoryRequest } from "./dto/update-category.request";
+import { CreateCategoryRequest } from "./dtos/create-category.request";
+import { UpdateCategoryRequest } from "./dtos/update-category.request";
 
 @Injectable()
 export class CategoryService {
@@ -18,46 +18,19 @@ export class CategoryService {
     return created;
   }
 
-  async createMany(names: string[]): Promise<{ count: number }> {
-    return await this.repository.createMany(names);
-  }
-
-  async findManyFromProduct(
-    productId: number,
-    paginatedRequest: PaginationQuery,
-  ): Promise<PaginationResponse<Category>> {
-    const { page, limit } = paginatedRequest;
-
-    const total = await this.repository.countAll();
-    const pages = Math.ceil(total / limit);
-    const previous = page > 1 && page <= pages;
-    const next = pages > 1 && page < pages;
-    const data = await this.repository.findManyFromProduct(
-      productId,
-      paginatedRequest,
-    );
-
-    const result: PaginationResponse<Category> = {
-      total,
-      pages,
-      previous,
-      next,
-      data,
-    };
-
-    return result;
-  }
-
   async findMany(
-    paginatedRequest: PaginationQuery,
+    commonQuery: CommonQuery<Category>,
   ): Promise<PaginationResponse<Category>> {
-    const { page, limit } = paginatedRequest;
+    const {
+      pagination: { limit, page },
+      filters,
+    } = commonQuery;
 
-    const total = await this.repository.countAll();
+    const total = await this.repository.countAll(filters);
     const pages = Math.ceil(total / limit);
     const previous = page > 1 && page <= pages;
     const next = pages > 1 && page < pages;
-    const data = await this.repository.findMany(paginatedRequest);
+    const data = await this.repository.findMany(commonQuery);
 
     const result: PaginationResponse<Category> = {
       total,
@@ -70,13 +43,11 @@ export class CategoryService {
     return result;
   }
 
-  async findById(id: number): Promise<Category> {
-    const resource = await this.repository.findById(id);
-
-    if (typeof resource === "undefined") {
+  async findOne(commonQuery: CommonQuery<Category>): Promise<Category> {
+    const resource = await this.repository.findOne(commonQuery);
+    if (!resource) {
       throw new NotFoundException();
     }
-
     return resource;
   }
 

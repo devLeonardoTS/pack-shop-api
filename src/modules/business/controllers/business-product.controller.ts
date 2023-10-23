@@ -5,10 +5,13 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Query,
   UseGuards,
 } from "@nestjs/common";
 import { Product } from "@prisma/client";
 import { JwtAuthGuard } from "@src/modules/auth/jwt-auth.guard";
+import { CommonQuery } from "@src/modules/common/dtos/common.query";
+import { PaginationResponse } from "@src/modules/common/dtos/pagination.response";
 import { CreateProductRequest } from "@src/modules/product/dto/create-product.request";
 import { ProductService } from "@src/modules/product/product.service";
 
@@ -29,9 +32,13 @@ export class BusinessProductController {
   }
 
   @Get()
-  async findByParentId(
+  async findManyByParentId(
     @Param("businessId", ParseIntPipe) businessId: number,
-  ): Promise<Product> {
-    return this.productService.findOne({ filters: { businessId } });
+    @Query() query: CommonQuery<Product>,
+  ): Promise<PaginationResponse<Product>> {
+    if (!query.filters.businessId) {
+      query.filters.businessId = businessId;
+    }
+    return this.productService.findMany(query);
   }
 }

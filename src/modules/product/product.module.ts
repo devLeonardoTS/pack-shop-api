@@ -1,21 +1,16 @@
 import { Module } from "@nestjs/common";
 import { ImageModule } from "../image/image.module";
 import { UploadModule } from "../upload/upload.module";
-import { ICategoryRepository } from "./category/category-repository.interface";
-import { CategoryService } from "./category/category.service";
-import { CategoryController } from "./category/controllers/category.controller";
-import { ProductCategoryController } from "./category/controllers/product-category.controller";
-import { PrismaCategoryRepository } from "./category/prisma-category.repository";
+import { PrismaProductCategoryRepository } from "./category/prisma-product-category.repository";
+import { IProductCategoryRepository } from "./category/product-category-repository.interface";
+import { ProductCategoryController } from "./category/product-category.controller";
+import { ProductCategoryService } from "./category/product-category.service";
 import { PrismaProductImageRepository } from "./image/prisma-product-image.repository";
 import { ProductImageController } from "./image/product-image.controller";
 import { IProductImageRepository } from "./image/product-image.interface";
 import { ProductImageService } from "./image/product-image.service";
 import { PrismaProductRepository } from "./prisma-product.repository";
 import { IProductRepository } from "./product-repository.interface";
-import { PrismaProductTypeRepository } from "./product-type/prisma-product-type.repository";
-import { IProductTypeRepository } from "./product-type/product-type-repository.interface";
-import { ProductTypeController } from "./product-type/product-type.controller";
-import { ProductTypeService } from "./product-type/product-type.service";
 import { ProductController } from "./product.controller";
 import { ProductService } from "./product.service";
 import { ProductTagController } from "./tag/controllers/product-tag.controller";
@@ -28,21 +23,20 @@ import { TagService } from "./tag/tag.service";
   controllers: [
     TagController,
     ProductTagController,
-    CategoryController,
     ProductCategoryController,
-    ProductTypeController,
     ProductController,
     ProductImageController,
   ],
   providers: [
     TagService,
-    CategoryService,
-    ProductTypeService,
+    ProductCategoryService,
     ProductService,
     ProductImageService,
     { provide: ITagRepository, useClass: PrismaTagRepository },
-    { provide: ICategoryRepository, useClass: PrismaCategoryRepository },
-    { provide: IProductTypeRepository, useClass: PrismaProductTypeRepository },
+    {
+      provide: IProductCategoryRepository,
+      useClass: PrismaProductCategoryRepository,
+    },
     { provide: IProductRepository, useClass: PrismaProductRepository },
     {
       provide: IProductImageRepository,
