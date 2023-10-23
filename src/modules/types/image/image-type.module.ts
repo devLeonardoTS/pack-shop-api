@@ -1,8 +1,9 @@
 import { Module } from "@nestjs/common";
+import { ImageModule } from "@src/modules/image/image.module";
+import { IImageTypeRepository } from "./image-type-repository.interface";
 import { ImageTypeController } from "./image-type.controller";
 import { ImageTypeService } from "./image-type.service";
-import { IImageTypeRepository } from "./interfaces/image-type-repository.interface";
-import { PrismaImageTypeRepository } from "./repositories/prisma-image-type.repository";
+import { PrismaImageTypeRepository } from "./prisma-image-type.repository";
 
 @Module({
   controllers: [ImageTypeController],
@@ -13,5 +14,6 @@ import { PrismaImageTypeRepository } from "./repositories/prisma-image-type.repo
       useClass: PrismaImageTypeRepository,
     },
   ],
+  imports: [ImageModule],
 })
 export class ImageTypeModule {}

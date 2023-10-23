@@ -1,10 +1,10 @@
 import { Inject, Injectable, NotFoundException } from "@nestjs/common";
 import { ImageType } from "@prisma/client";
-import { PaginationQuery } from "@src/modules/common/dtos/pagination.query";
+import { CommonQuery } from "@src/modules/common/dtos/common.query";
 import { PaginationResponse } from "@src/modules/common/dtos/pagination.response";
-import { CreateImageTypeRequest } from "./dto/create-image-type.request";
-import { UpdateImageTypeRequest } from "./dto/update-image-type.request";
-import { IImageTypeRepository } from "./interfaces/image-type-repository.interface";
+import { CreateImageTypeRequest } from "./dtos/create-image-type.request";
+import { UpdateImageTypeRequest } from "./dtos/update-image-type.request";
+import { IImageTypeRepository } from "./image-type-repository.interface";
 
 @Injectable()
 export class ImageTypeService {
@@ -19,15 +19,18 @@ export class ImageTypeService {
   }
 
   async findMany(
-    paginatedRequest: PaginationQuery,
+    commonQuery: CommonQuery<ImageType>,
   ): Promise<PaginationResponse<ImageType>> {
-    const { page, limit } = paginatedRequest;
+    const {
+      pagination: { limit, page },
+      filters,
+    } = commonQuery;
 
-    const total = await this.repository.countAll();
+    const total = await this.repository.countAll(filters);
     const pages = Math.ceil(total / limit);
     const previous = page > 1 && page <= pages;
     const next = pages > 1 && page < pages;
-    const data = await this.repository.findMany(paginatedRequest);
+    const data = await this.repository.findMany(commonQuery);
 
     const result: PaginationResponse<ImageType> = {
       total,
@@ -40,13 +43,11 @@ export class ImageTypeService {
     return result;
   }
 
-  async findById(id: number): Promise<ImageType> {
-    const resource = await this.repository.findById(id);
-
-    if (typeof resource === "undefined") {
+  async findOne(commonQuery: CommonQuery<ImageType>): Promise<ImageType> {
+    const resource = await this.repository.findOne(commonQuery);
+    if (!resource) {
       throw new NotFoundException();
     }
-
     return resource;
   }
 

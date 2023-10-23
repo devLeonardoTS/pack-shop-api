@@ -1,10 +1,10 @@
 import { Injectable } from "@nestjs/common";
 import { ImageType } from "@prisma/client";
 import PrismaService from "@src/databases/prisma/prisma.service";
-import { PaginationQuery } from "@src/modules/common/dtos/pagination.query";
-import { CreateImageTypeRequest } from "../dto/create-image-type.request";
-import { UpdateImageTypeRequest } from "../dto/update-image-type.request";
-import { IImageTypeRepository } from "../interfaces/image-type-repository.interface";
+import { CommonQuery } from "@src/modules/common/dtos/common.query";
+import { CreateImageTypeRequest } from "./dtos/create-image-type.request";
+import { UpdateImageTypeRequest } from "./dtos/update-image-type.request";
+import { IImageTypeRepository } from "./image-type-repository.interface";
 
 @Injectable()
 export class PrismaImageTypeRepository implements IImageTypeRepository {
@@ -18,8 +18,12 @@ export class PrismaImageTypeRepository implements IImageTypeRepository {
     return created;
   }
 
-  async findMany(paginationQuery: PaginationQuery): Promise<ImageType[]> {
-    const { page, limit } = paginationQuery;
+  async findMany(commonQuery: CommonQuery<ImageType>): Promise<ImageType[]> {
+    const {
+      pagination: { limit, page },
+      filters,
+      orderBy,
+    } = commonQuery;
 
     const take = limit;
     const skip = (page - 1) * limit;
@@ -27,14 +31,24 @@ export class PrismaImageTypeRepository implements IImageTypeRepository {
     const list: ImageType[] = await this.db.imageType.findMany({
       take,
       skip,
+      where: filters,
+      orderBy,
     });
 
     return list;
   }
 
-  async findById(id: number): Promise<ImageType> {
+  async findOne(commonQuery: CommonQuery<ImageType>): Promise<ImageType> {
+    const {
+      pagination: { limit, page },
+      filters,
+      orderBy,
+      include,
+    } = commonQuery;
+
     const item: ImageType = await this.db.imageType.findFirst({
-      where: { id },
+      where: filters,
+      include,
     });
     return item;
   }
@@ -44,12 +58,17 @@ export class PrismaImageTypeRepository implements IImageTypeRepository {
     updateReq: UpdateImageTypeRequest,
   ): Promise<ImageType> {
     const { type } = updateReq;
-    return await this.db.imageType.update({
+
+    const updatedResource = await this.db.imageType.update({
       where: {
-        id,
+        id: id,
       },
-      data: { type },
+      data: {
+        type,
+      },
     });
+
+    return updatedResource;
   }
 
   async remove(id: number): Promise<ImageType> {
@@ -57,7 +76,7 @@ export class PrismaImageTypeRepository implements IImageTypeRepository {
     return removed;
   }
 
-  async countAll(): Promise<number> {
-    return await this.db.imageType.count();
+  async countAll(filters: Partial<ImageType>): Promise<number> {
+    return await this.db.imageType.count({ where: filters });
   }
 }

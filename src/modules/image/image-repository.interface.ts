@@ -1,14 +1,15 @@
 import { Image } from "@prisma/client";
-import { CreateImageRequest } from "./create-image.request";
-import { UpdateImageRequest } from "./update-image.request";
+import { CommonQuery } from "../common/dtos/common.query";
+import { CreateImageRequest } from "./dtos/create-image.request";
+import { UpdateImageRequest } from "./dtos/update-image.request";
 
 export interface IImageRepository {
   create(createRequest: CreateImageRequest): Promise<Image>;
-  findById(id: number): Promise<Image>;
-  findByPublicId(publicId: string): Promise<Image>;
-  update(id: number, updateRequest: UpdateImageRequest);
+  findMany(commonQuery: CommonQuery<Image>): Promise<Image[]>;
+  findOne(commonQuery: CommonQuery<Image>): Promise<Image>;
+  update(id: number, updateReq: UpdateImageRequest): Promise<Image>;
   remove(id: number): Promise<Image>;
-  countAll(): Promise<number>;
+  countAll(filters: Partial<Image>): Promise<number>;
 }
 
 export const IImageRepository = Symbol("IImageRepository");
