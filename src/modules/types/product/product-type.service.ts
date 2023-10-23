@@ -1,26 +1,26 @@
 import { Inject, Injectable, NotFoundException } from "@nestjs/common";
-import { Product } from "@prisma/client";
+import { ProductType } from "@prisma/client";
+import { CommonQuery } from "@src/modules/common/dtos/common.query";
 import { PaginationResponse } from "@src/modules/common/dtos/pagination.response";
-import { CommonQuery } from "../common/dtos/common.query";
-import { CreateProductRequest } from "./dto/create-product.request";
-import { UpdateProductRequest } from "./dto/update-product.request";
-import { IProductRepository } from "./product-repository.interface";
+import { CreateProductTypeRequest } from "./dtos/create-product-type.request";
+import { UpdateProductTypeRequest } from "./dtos/update-product-type.request";
+import { IProductTypeRepository } from "./product-type-repository.interface";
 
 @Injectable()
-export class ProductService {
+export class ProductTypeService {
   constructor(
-    @Inject(IProductRepository)
-    private readonly repository: IProductRepository,
+    @Inject(IProductTypeRepository)
+    private readonly repository: IProductTypeRepository,
   ) {}
 
-  async create(createRequest: CreateProductRequest): Promise<Product> {
+  async create(createRequest: CreateProductTypeRequest): Promise<ProductType> {
     const created = await this.repository.create(createRequest);
     return created;
   }
 
   async findMany(
-    commonQuery: CommonQuery<Product>,
-  ): Promise<PaginationResponse<Product>> {
+    commonQuery: CommonQuery<ProductType>,
+  ): Promise<PaginationResponse<ProductType>> {
     const {
       pagination: { limit, page },
       filters,
@@ -32,7 +32,7 @@ export class ProductService {
     const next = pages > 1 && page < pages;
     const data = await this.repository.findMany(commonQuery);
 
-    const result: PaginationResponse<Product> = {
+    const result: PaginationResponse<ProductType> = {
       total,
       pages,
       previous,
@@ -43,7 +43,7 @@ export class ProductService {
     return result;
   }
 
-  async findOne(commonQuery: CommonQuery<Product>): Promise<Product> {
+  async findOne(commonQuery: CommonQuery<ProductType>): Promise<ProductType> {
     const resource = await this.repository.findOne(commonQuery);
     if (!resource) {
       throw new NotFoundException();
@@ -53,18 +53,18 @@ export class ProductService {
 
   async update(
     id: number,
-    updateRequest: UpdateProductRequest,
-  ): Promise<Product> {
+    updateRequest: UpdateProductTypeRequest,
+  ): Promise<ProductType> {
     const updated = await this.repository.update(id, updateRequest);
 
-    if (!updated) {
+    if (typeof updated === "undefined") {
       throw new NotFoundException();
     }
 
     return updated;
   }
 
-  async remove(id: number): Promise<Product> {
+  async remove(id: number): Promise<ProductType> {
     return await this.repository.remove(id);
   }
 }

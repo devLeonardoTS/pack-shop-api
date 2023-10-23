@@ -20,13 +20,11 @@ export class ProductImageService {
     return created;
   }
 
-  async findById(resourceId: number): Promise<ProductImage> {
-    const resource = await this.repository.findById(resourceId);
-
+  async findOne(commonQuery: CommonQuery<ProductImage>): Promise<ProductImage> {
+    const resource = await this.repository.findOne(commonQuery);
     if (!resource) {
       throw new NotFoundException();
     }
-
     return resource;
   }
 
@@ -35,9 +33,10 @@ export class ProductImageService {
   ): Promise<PaginationResponse<ProductImage>> {
     const {
       pagination: { limit, page },
+      filters,
     } = commonQuery;
 
-    const total = await this.repository.countAll();
+    const total = await this.repository.countAll(filters);
     const pages = Math.ceil(total / limit);
     const previous = page > 1 && page <= pages;
     const next = pages > 1 && page < pages;

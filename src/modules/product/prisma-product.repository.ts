@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { Product } from "@prisma/client";
 import PrismaService from "@src/databases/prisma/prisma.service";
-import { PaginationQuery } from "@src/modules/common/dtos/pagination.query";
+import { CommonQuery } from "../common/dtos/common.query";
 import { CreateProductRequest } from "./dto/create-product.request";
 import { UpdateProductRequest } from "./dto/update-product.request";
 import { IProductRepository } from "./product-repository.interface";
@@ -94,8 +94,13 @@ export class PrismaProductRepository implements IProductRepository {
     return created;
   }
 
-  async findMany(paginationQuery: PaginationQuery): Promise<Product[]> {
-    const { page, limit } = paginationQuery;
+  async findMany(commonQuery: CommonQuery<Product>): Promise<Product[]> {
+    const {
+      pagination: { limit, page },
+      filters,
+      orderBy,
+      include,
+    } = commonQuery;
 
     const take = limit;
     const skip = (page - 1) * limit;
@@ -103,93 +108,25 @@ export class PrismaProductRepository implements IProductRepository {
     const list: Product[] = await this.db.product.findMany({
       take,
       skip,
-      include: {
-        productCategories: {
-          include: {
-            category: true,
-          },
-        },
-        productTags: {
-          include: {
-            tag: true,
-          },
-        },
-        productType: true,
-      },
+      where: filters,
+      orderBy,
+      include,
     });
 
     return list;
   }
 
-  async findManyFromOwner(
-    businessId: number,
-    paginationQuery: PaginationQuery,
-  ): Promise<Product[]> {
-    const { page, limit } = paginationQuery;
+  async findOne(commonQuery: CommonQuery<Product>): Promise<Product> {
+    const {
+      pagination: { limit, page },
+      filters,
+      orderBy,
+      include,
+    } = commonQuery;
 
-    const take = limit;
-    const skip = (page - 1) * limit;
-
-    const list: Product[] = await this.db.product.findMany({
-      take,
-      skip,
-      where: {
-        businessId,
-      },
-      include: {
-        productCategories: {
-          include: {
-            category: true,
-          },
-        },
-        productTags: {
-          include: {
-            tag: true,
-          },
-        },
-        productType: true,
-      },
-    });
-
-    return list;
-  }
-
-  async findById(id: number): Promise<Product> {
     const item: Product = await this.db.product.findFirst({
-      where: { id },
-      include: {
-        productCategories: {
-          include: {
-            category: true,
-          },
-        },
-        productTags: {
-          include: {
-            tag: true,
-          },
-        },
-        productType: true,
-      },
-    });
-    return item;
-  }
-
-  async findByOwnerId(businessId: number): Promise<Product> {
-    const item: Product = await this.db.product.findFirst({
-      where: { businessId },
-      include: {
-        productCategories: {
-          include: {
-            category: true,
-          },
-        },
-        productTags: {
-          include: {
-            tag: true,
-          },
-        },
-        productType: true,
-      },
+      where: filters,
+      include,
     });
     return item;
   }

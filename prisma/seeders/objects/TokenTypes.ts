@@ -1,5 +1,5 @@
-import { TokenType } from "@src/modules/token-type/entities/token-type.entity";
-import { ETokenType } from "@src/modules/token-type/enums/token-type.enum";
+import { TokenType } from "@prisma/client";
+import { ETokenType } from "@src/modules/types/token/token-type.enum";
 
 export function createTokenTypes() {
   const objects: Omit<TokenType, "id" | "createdAt">[] = [];

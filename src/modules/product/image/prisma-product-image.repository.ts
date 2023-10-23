@@ -42,14 +42,22 @@ export class PrismaProductImageRepository implements IProductImageRepository {
     return attachedImage;
   }
 
-  async findById(resourceId: number): Promise<ProductImage> {
-    const resource: ProductImage = await this.db.productImage.findFirst({
-      where: { id: resourceId },
+  async findOne(commonQuery: CommonQuery<ProductImage>): Promise<ProductImage> {
+    const {
+      pagination: { limit, page },
+      filters,
+      orderBy,
+      include,
+    } = commonQuery;
+
+    const item: ProductImage = await this.db.productImage.findFirst({
+      where: filters,
       include: {
         image: { include: { imageType: true } },
+        ...include,
       },
     });
-    return resource;
+    return item;
   }
 
   async findMany(
@@ -57,8 +65,9 @@ export class PrismaProductImageRepository implements IProductImageRepository {
   ): Promise<ProductImage[]> {
     const {
       pagination: { limit, page },
-      filters: { productId, ...otherFilters },
+      filters,
       orderBy,
+      include,
     } = commonQuery;
 
     const take = limit;
@@ -67,10 +76,11 @@ export class PrismaProductImageRepository implements IProductImageRepository {
     const list: ProductImage[] = await this.db.productImage.findMany({
       take,
       skip,
-      where: { productId: productId || 0, ...otherFilters },
+      where: filters,
       orderBy,
       include: {
         image: { include: { imageType: true } },
+        ...include,
       },
     });
 
@@ -113,7 +123,7 @@ export class PrismaProductImageRepository implements IProductImageRepository {
     return removed;
   }
 
-  async countAll(): Promise<number> {
-    return await this.db.productImage.count();
+  async countAll(filters: Partial<ProductImage>): Promise<number> {
+    return await this.db.productImage.count({ where: filters });
   }
 }

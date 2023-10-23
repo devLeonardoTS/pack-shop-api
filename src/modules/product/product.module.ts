@@ -16,10 +16,7 @@ import { PrismaProductTypeRepository } from "./product-type/prisma-product-type.
 import { IProductTypeRepository } from "./product-type/product-type-repository.interface";
 import { ProductTypeController } from "./product-type/product-type.controller";
 import { ProductTypeService } from "./product-type/product-type.service";
-import {
-  BaseProductController,
-  ProfileProductController,
-} from "./product.controller";
+import { ProductController } from "./product.controller";
 import { ProductService } from "./product.service";
 import { ProductTagController } from "./tag/controllers/product-tag.controller";
 import { TagController } from "./tag/controllers/tag.controller";
@@ -34,8 +31,7 @@ import { TagService } from "./tag/tag.service";
     CategoryController,
     ProductCategoryController,
     ProductTypeController,
-    BaseProductController,
-    ProfileProductController,
+    ProductController,
     ProductImageController,
   ],
   providers: [
@@ -53,6 +49,7 @@ import { TagService } from "./tag/tag.service";
       useClass: PrismaProductImageRepository,
     },
   ],
+  exports: [ProductService],
   imports: [ImageModule, UploadModule],
 })
 export class ProductModule {}

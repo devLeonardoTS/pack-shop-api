@@ -1,10 +1,10 @@
 import { Inject, Injectable, NotFoundException } from "@nestjs/common";
-import { PaginationQuery } from "@src/modules/common/dtos/pagination.query";
+import { TokenType } from "@prisma/client";
+import { CommonQuery } from "@src/modules/common/dtos/common.query";
 import { PaginationResponse } from "@src/modules/common/dtos/pagination.response";
-import { CreateTokenTypeRequest } from "../dto/create-token-type.request";
-import { UpdateTokenTypeRequest } from "../dto/update-token-type.request";
-import { TokenType } from "../entities/token-type.entity";
-import { ITokenTypeRepository } from "../interfaces/token-type-repository.interface";
+import { CreateTokenTypeRequest } from "./dtos/create-token-type.request";
+import { UpdateTokenTypeRequest } from "./dtos/update-token-type.request";
+import { ITokenTypeRepository } from "./token-type-repository.interface";
 
 @Injectable()
 export class TokenTypeService {
@@ -19,15 +19,18 @@ export class TokenTypeService {
   }
 
   async findMany(
-    paginatedRequest: PaginationQuery,
+    commonQuery: CommonQuery<TokenType>,
   ): Promise<PaginationResponse<TokenType>> {
-    const { page, limit } = paginatedRequest;
+    const {
+      pagination: { limit, page },
+      filters,
+    } = commonQuery;
 
-    const total = await this.repository.countAll();
+    const total = await this.repository.countAll(filters);
     const pages = Math.ceil(total / limit);
     const previous = page > 1 && page <= pages;
     const next = pages > 1 && page < pages;
-    const data = await this.repository.findMany(paginatedRequest);
+    const data = await this.repository.findMany(commonQuery);
 
     const result: PaginationResponse<TokenType> = {
       total,
@@ -40,13 +43,11 @@ export class TokenTypeService {
     return result;
   }
 
-  async findById(id: number): Promise<TokenType> {
-    const resource = await this.repository.findById(id);
-
-    if (typeof resource === "undefined") {
+  async findOne(commonQuery: CommonQuery<TokenType>): Promise<TokenType> {
+    const resource = await this.repository.findOne(commonQuery);
+    if (!resource) {
       throw new NotFoundException();
     }
-
     return resource;
   }
 
