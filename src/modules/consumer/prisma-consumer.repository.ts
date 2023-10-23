@@ -1,8 +1,8 @@
 import { ConflictException, Injectable } from "@nestjs/common";
 import { Consumer, Prisma } from "@prisma/client";
 import PrismaService from "@src/databases/prisma/prisma.service";
-import { PaginationQuery } from "@src/modules/common/dtos/pagination.query";
-import { ProfileService } from "../profile.service";
+import { CommonQuery } from "../common/dtos/common.query";
+import { ProfileService } from "../profile/profile.service";
 import { IConsumerRepository } from "./consumer-repository.interface";
 import { CreateConsumerRequest } from "./dto/create-consumer.request";
 import { UpdateConsumerRequest } from "./dto/update-consumer.request";
@@ -36,8 +36,13 @@ export class PrismaConsumerRepository implements IConsumerRepository {
     return created;
   }
 
-  async findMany(paginationQuery: PaginationQuery): Promise<Consumer[]> {
-    const { page, limit } = paginationQuery;
+  async findMany(commonQuery: CommonQuery<Consumer>): Promise<Consumer[]> {
+    const {
+      pagination: { limit, page },
+      filters,
+      orderBy,
+      include,
+    } = commonQuery;
 
     const take = limit;
     const skip = (page - 1) * limit;
@@ -45,21 +50,25 @@ export class PrismaConsumerRepository implements IConsumerRepository {
     const list: Consumer[] = await this.db.consumer.findMany({
       take,
       skip,
+      where: filters,
+      orderBy,
+      include,
     });
 
     return list;
   }
 
-  async findById(id: number): Promise<Consumer> {
-    const item: Consumer = await this.db.consumer.findFirst({
-      where: { id },
-    });
-    return item;
-  }
+  async findOne(commonQuery: CommonQuery<Consumer>): Promise<Consumer> {
+    const {
+      pagination: { limit, page },
+      filters,
+      orderBy,
+      include,
+    } = commonQuery;
 
-  async findByOwnerId(ownerId: number): Promise<Consumer> {
     const item: Consumer = await this.db.consumer.findFirst({
-      where: { profile: { id: ownerId } },
+      where: filters,
+      include,
     });
     return item;
   }
@@ -90,8 +99,8 @@ export class PrismaConsumerRepository implements IConsumerRepository {
     return removed;
   }
 
-  async countAll(): Promise<number> {
-    return await this.db.consumer.count();
+  async countAll(filters: Partial<Consumer>): Promise<number> {
+    return await this.db.consumer.count({ where: filters });
   }
 
   async checkAlreadySpecialized(profileId: number): Promise<boolean> {

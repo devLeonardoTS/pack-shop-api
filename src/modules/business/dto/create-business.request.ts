@@ -1,4 +1,4 @@
-import { EBusinessType } from "@src/modules/business-type/enums/business-type.enum";
+import { EBusinessType } from "@src/modules/types/business/business-type.enum";
 import { Type } from "class-transformer";
 import {
   IsDate,

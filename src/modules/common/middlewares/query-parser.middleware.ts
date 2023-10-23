@@ -18,11 +18,12 @@ export class QueryParserMiddleware implements NestMiddleware {
         parseUndefined: true,
       });
 
-      const { page, limit, orderBy, ...others } = req.query;
+      const { page, limit, orderBy, include, ...others } = req.query;
       const commonQuery: CommonQuery<any> = {
         pagination: { page: page as any, limit: limit as any },
         filters: others,
         orderBy: orderBy || {},
+        include: include || {},
       };
       req.query = commonQuery as any;
       next();

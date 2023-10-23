@@ -1,20 +1,15 @@
 import { Address } from "@prisma/client";
-import { PaginationQuery } from "@src/modules/common/dtos/pagination.query";
+import { CommonQuery } from "@src/modules/common/dtos/common.query";
 import { CreateAddressRequest } from "./dto/create-address.request";
 import { UpdateAddressRequest } from "./dto/update-address.request";
 
 export interface IAddressRepository {
   create(createRequest: CreateAddressRequest): Promise<Address>;
-  findMany(
-    ownerId: number,
-    paginationQuery: PaginationQuery,
-  ): Promise<Address[]>;
-  findById(id: number): Promise<Address>;
-  findByOwnerId(ownerId: number): Promise<Address>;
-  findPrimary(ownerId: number): Promise<Address>;
+  findMany(commonQuery: CommonQuery<Address>): Promise<Address[]>;
+  findOne(commonQuery: CommonQuery<Address>): Promise<Address>;
   update(id: number, updateReq: UpdateAddressRequest): Promise<Address>;
   remove(id: number): Promise<Address>;
-  countAll(): Promise<number>;
+  countAll(filters: Partial<Address>): Promise<number>;
 }
 
 export const IAddressRepository = Symbol("IAddressRepository");

@@ -1,10 +1,10 @@
 import { Injectable } from "@nestjs/common";
 import { BusinessType } from "@prisma/client";
 import PrismaService from "@src/databases/prisma/prisma.service";
-import { PaginationQuery } from "@src/modules/common/dtos/pagination.query";
-import { CreateBusinessTypeRequest } from "../dto/create-business-type.request";
-import { UpdateBusinessTypeRequest } from "../dto/update-business-type.request";
-import { IBusinessTypeRepository } from "../interfaces/business-type-repository.interface";
+import { CommonQuery } from "@src/modules/common/dtos/common.query";
+import { IBusinessTypeRepository } from "./business-type-repository.interface";
+import { CreateBusinessTypeRequest } from "./dtos/create-business-type.request";
+import { UpdateBusinessTypeRequest } from "./dtos/update-business-type.request";
 
 @Injectable()
 export class PrismaBusinessTypeRepository implements IBusinessTypeRepository {
@@ -20,8 +20,14 @@ export class PrismaBusinessTypeRepository implements IBusinessTypeRepository {
     return created;
   }
 
-  async findMany(paginationQuery: PaginationQuery): Promise<BusinessType[]> {
-    const { page, limit } = paginationQuery;
+  async findMany(
+    commonQuery: CommonQuery<BusinessType>,
+  ): Promise<BusinessType[]> {
+    const {
+      pagination: { limit, page },
+      filters,
+      orderBy,
+    } = commonQuery;
 
     const take = limit;
     const skip = (page - 1) * limit;
@@ -29,6 +35,8 @@ export class PrismaBusinessTypeRepository implements IBusinessTypeRepository {
     const list: BusinessType[] = await this.db.businessType.findMany({
       take,
       skip,
+      where: filters,
+      orderBy,
     });
 
     return list;
@@ -46,12 +54,17 @@ export class PrismaBusinessTypeRepository implements IBusinessTypeRepository {
     updateReq: UpdateBusinessTypeRequest,
   ): Promise<BusinessType> {
     const { type } = updateReq;
-    return await this.db.businessType.update({
+
+    const updatedResource = await this.db.businessType.update({
       where: {
-        id,
+        id: id,
       },
-      data: { type },
+      data: {
+        type,
+      },
     });
+
+    return updatedResource;
   }
 
   async remove(id: number): Promise<BusinessType> {
@@ -59,7 +72,7 @@ export class PrismaBusinessTypeRepository implements IBusinessTypeRepository {
     return removed;
   }
 
-  async countAll(): Promise<number> {
-    return await this.db.businessType.count();
+  async countAll(filters: Partial<BusinessType>): Promise<number> {
+    return await this.db.businessType.count({ where: filters });
   }
 }

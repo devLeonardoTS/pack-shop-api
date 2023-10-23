@@ -1,6 +1,6 @@
 import { Inject, Injectable, NotFoundException } from "@nestjs/common";
 import { Address } from "@prisma/client";
-import { PaginationQuery } from "@src/modules/common/dtos/pagination.query";
+import { CommonQuery } from "@src/modules/common/dtos/common.query";
 import { PaginationResponse } from "@src/modules/common/dtos/pagination.response";
 import { IAddressRepository } from "./address-repository.interface";
 import { CreateAddressRequest } from "./dto/create-address.request";
@@ -19,16 +19,18 @@ export class AddressService {
   }
 
   async findMany(
-    ownerId: number,
-    paginatedRequest: PaginationQuery,
+    commonQuery: CommonQuery<Address>,
   ): Promise<PaginationResponse<Address>> {
-    const { page, limit } = paginatedRequest;
+    const {
+      pagination: { limit, page },
+      filters,
+    } = commonQuery;
 
-    const total = await this.repository.countAll();
+    const total = await this.repository.countAll(filters);
     const pages = Math.ceil(total / limit);
     const previous = page > 1 && page <= pages;
     const next = pages > 1 && page < pages;
-    const data = await this.repository.findMany(ownerId, paginatedRequest);
+    const data = await this.repository.findMany(commonQuery);
 
     const result: PaginationResponse<Address> = {
       total,
@@ -41,33 +43,11 @@ export class AddressService {
     return result;
   }
 
-  async findById(id: number): Promise<Address> {
-    const resource = await this.repository.findById(id);
-
+  async findOne(commonQuery: CommonQuery<Address>): Promise<Address> {
+    const resource = await this.repository.findOne(commonQuery);
     if (!resource) {
       throw new NotFoundException();
     }
-
-    return resource;
-  }
-
-  async findByOwnerId(userAccountId: number): Promise<Address> {
-    const resource = await this.repository.findByOwnerId(userAccountId);
-
-    if (!resource) {
-      throw new NotFoundException();
-    }
-
-    return resource;
-  }
-
-  async findPrimary(userAccountId: number): Promise<Address> {
-    const resource = await this.repository.findPrimary(userAccountId);
-
-    if (!resource) {
-      throw new NotFoundException();
-    }
-
     return resource;
   }
 

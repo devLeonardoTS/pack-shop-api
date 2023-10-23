@@ -1,10 +1,10 @@
 import { Inject, Injectable, NotFoundException } from "@nestjs/common";
 import { BusinessType } from "@prisma/client";
-import { PaginationQuery } from "@src/modules/common/dtos/pagination.query";
+import { CommonQuery } from "@src/modules/common/dtos/common.query";
 import { PaginationResponse } from "@src/modules/common/dtos/pagination.response";
-import { CreateBusinessTypeRequest } from "./dto/create-business-type.request";
-import { UpdateBusinessTypeRequest } from "./dto/update-business-type.request";
-import { IBusinessTypeRepository } from "./interfaces/business-type-repository.interface";
+import { IBusinessTypeRepository } from "./business-type-repository.interface";
+import { CreateBusinessTypeRequest } from "./dtos/create-business-type.request";
+import { UpdateBusinessTypeRequest } from "./dtos/update-business-type.request";
 
 @Injectable()
 export class BusinessTypeService {
@@ -21,15 +21,18 @@ export class BusinessTypeService {
   }
 
   async findMany(
-    paginatedRequest: PaginationQuery,
+    commonQuery: CommonQuery<BusinessType>,
   ): Promise<PaginationResponse<BusinessType>> {
-    const { page, limit } = paginatedRequest;
+    const {
+      pagination: { limit, page },
+      filters,
+    } = commonQuery;
 
-    const total = await this.repository.countAll();
+    const total = await this.repository.countAll(filters);
     const pages = Math.ceil(total / limit);
     const previous = page > 1 && page <= pages;
     const next = pages > 1 && page < pages;
-    const data = await this.repository.findMany(paginatedRequest);
+    const data = await this.repository.findMany(commonQuery);
 
     const result: PaginationResponse<BusinessType> = {
       total,

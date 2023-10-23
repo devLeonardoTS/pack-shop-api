@@ -1,6 +1,6 @@
 import { Inject, Injectable, NotFoundException } from "@nestjs/common";
 import { Business } from "@prisma/client";
-import { PaginationQuery } from "@src/modules/common/dtos/pagination.query";
+import { CommonQuery } from "@src/modules/common/dtos/common.query";
 import { PaginationResponse } from "@src/modules/common/dtos/pagination.response";
 import { IBusinessRepository } from "./business-repository.interface";
 import { CreateBusinessRequest } from "./dto/create-business.request";
@@ -19,15 +19,18 @@ export class BusinessService {
   }
 
   async findMany(
-    paginatedRequest: PaginationQuery,
+    commonQuery: CommonQuery<Business>,
   ): Promise<PaginationResponse<Business>> {
-    const { page, limit } = paginatedRequest;
+    const {
+      pagination: { limit, page },
+      filters,
+    } = commonQuery;
 
-    const total = await this.repository.countAll();
+    const total = await this.repository.countAll(filters);
     const pages = Math.ceil(total / limit);
     const previous = page > 1 && page <= pages;
     const next = pages > 1 && page < pages;
-    const data = await this.repository.findMany(paginatedRequest);
+    const data = await this.repository.findMany(commonQuery);
 
     const result: PaginationResponse<Business> = {
       total,
@@ -40,23 +43,11 @@ export class BusinessService {
     return result;
   }
 
-  async findById(id: number): Promise<Business> {
-    const resource = await this.repository.findById(id);
-
+  async findOne(commonQuery: CommonQuery<Business>): Promise<Business> {
+    const resource = await this.repository.findOne(commonQuery);
     if (!resource) {
       throw new NotFoundException();
     }
-
-    return resource;
-  }
-
-  async findByOwnerId(userAccountId: number): Promise<Business> {
-    const resource = await this.repository.findByOwnerId(userAccountId);
-
-    if (!resource) {
-      throw new NotFoundException();
-    }
-
     return resource;
   }
 

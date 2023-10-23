@@ -5,40 +5,34 @@ import {
   Get,
   Param,
   ParseIntPipe,
-  Post,
   Put,
-  UseGuards,
+  Query,
 } from "@nestjs/common";
 import { Consumer } from "@prisma/client";
-import { JwtAuthGuard } from "@src/modules/auth/jwt-auth.guard";
+import { CommonQuery } from "../common/dtos/common.query";
+import { PaginationResponse } from "../common/dtos/pagination.response";
 import { ConsumerService } from "./consumer-profile.service";
-import { CreateConsumerRequest } from "./dto/create-consumer.request";
 import { UpdateConsumerRequest } from "./dto/update-consumer.request";
 
-@Controller("profile/:profileId/consumer")
+@Controller("consumer")
 export class ConsumerController {
   constructor(private readonly consumerService: ConsumerService) {}
 
-  @UseGuards(JwtAuthGuard)
-  @Post()
-  async create(
-    @Param("profileId", ParseIntPipe) profileId: number,
-    @Body() createRequest: CreateConsumerRequest,
-  ): Promise<Consumer> {
-    createRequest.profileId = profileId;
-    return await this.consumerService.create(createRequest);
-  }
-
   @Get()
-  async findByOwnerId(
-    @Param("profileId", ParseIntPipe) profileId: number,
-  ): Promise<Consumer> {
-    return this.consumerService.findByOwnerId(profileId);
+  async findMany(
+    @Query() query: CommonQuery<Consumer>,
+  ): Promise<PaginationResponse<Consumer>> {
+    const result = await this.consumerService.findMany(query);
+    return result;
   }
 
   @Get(":id")
-  async findById(@Param("id", ParseIntPipe) id: number): Promise<Consumer> {
-    return this.consumerService.findById(id);
+  async findById(
+    @Param("id", ParseIntPipe) id: number,
+    @Query() query: CommonQuery<Consumer>,
+  ): Promise<Consumer> {
+    query.filters.id = id;
+    return this.consumerService.findOne(query);
   }
 
   @Put(":id")

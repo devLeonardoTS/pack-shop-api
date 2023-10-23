@@ -1,8 +1,8 @@
 import { ConflictException, Injectable } from "@nestjs/common";
 import { Business, Prisma } from "@prisma/client";
 import PrismaService from "@src/databases/prisma/prisma.service";
-import { PaginationQuery } from "@src/modules/common/dtos/pagination.query";
-import { ProfileService } from "../profile.service";
+import { CommonQuery } from "@src/modules/common/dtos/common.query";
+import { ProfileService } from "../profile/profile.service";
 import { IBusinessRepository } from "./business-repository.interface";
 import { CreateBusinessRequest } from "./dto/create-business.request";
 import { UpdateBusinessRequest } from "./dto/update-business.request";
@@ -43,13 +43,22 @@ export class PrismaBusinessRepository implements IBusinessRepository {
         },
         businessType: { connect: { type: businessType } },
       },
+      include: {
+        businessType: true,
+        businessOwner: true,
+      },
     });
 
     return created;
   }
 
-  async findMany(paginationQuery: PaginationQuery): Promise<Business[]> {
-    const { page, limit } = paginationQuery;
+  async findMany(commonQuery: CommonQuery<Business>): Promise<Business[]> {
+    const {
+      pagination: { limit, page },
+      filters,
+      orderBy,
+      include,
+    } = commonQuery;
 
     const take = limit;
     const skip = (page - 1) * limit;
@@ -57,30 +66,29 @@ export class PrismaBusinessRepository implements IBusinessRepository {
     const list: Business[] = await this.db.business.findMany({
       take,
       skip,
+      where: filters,
+      orderBy,
       include: {
+        ...include,
         businessType: true,
+        businessOwner: true,
       },
     });
 
     return list;
   }
 
-  async findById(id: number): Promise<Business> {
-    const item: Business = await this.db.business.findFirst({
-      where: { id },
-      include: {
-        businessType: true,
-      },
-    });
-    return item;
-  }
+  async findOne(commonQuery: CommonQuery<Business>): Promise<Business> {
+    const {
+      pagination: { limit, page },
+      filters,
+      orderBy,
+      include,
+    } = commonQuery;
 
-  async findByOwnerId(ownerId: number): Promise<Business> {
     const item: Business = await this.db.business.findFirst({
-      where: { profile: { id: ownerId } },
-      include: {
-        businessType: true,
-      },
+      where: filters,
+      include,
     });
     return item;
   }
@@ -114,6 +122,7 @@ export class PrismaBusinessRepository implements IBusinessRepository {
       },
       include: {
         businessType: true,
+        businessOwner: true,
       },
     });
   }
@@ -123,13 +132,14 @@ export class PrismaBusinessRepository implements IBusinessRepository {
       where: { id },
       include: {
         businessType: true,
+        businessOwner: true,
       },
     });
     return removed;
   }
 
-  async countAll(): Promise<number> {
-    return await this.db.business.count();
+  async countAll(filters: Partial<Business>): Promise<number> {
+    return await this.db.business.count({ where: filters });
   }
 
   async checkAlreadySpecialized(profileId: number): Promise<boolean> {
