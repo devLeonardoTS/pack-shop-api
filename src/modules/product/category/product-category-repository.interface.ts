@@ -4,7 +4,9 @@ import { CreateProductCategoryRequest } from "./dto/create-product-category.requ
 import { UpdateProductCategoryRequest } from "./dto/update-product-category.request";
 
 export interface IProductCategoryRepository {
-  create(createRequest: CreateProductCategoryRequest): Promise<ProductCategory>;
+  connect(
+    createRequest: CreateProductCategoryRequest,
+  ): Promise<ProductCategory>;
   findMany(
     commonQuery: CommonQuery<ProductCategory>,
   ): Promise<ProductCategory[]>;

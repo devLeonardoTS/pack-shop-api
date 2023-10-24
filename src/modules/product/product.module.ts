@@ -13,11 +13,11 @@ import { PrismaProductRepository } from "./prisma-product.repository";
 import { IProductRepository } from "./product-repository.interface";
 import { ProductController } from "./product.controller";
 import { ProductService } from "./product.service";
-import { ProductTagController } from "./tag/controllers/product-tag.controller";
 import { TagController } from "./tag/controllers/tag.controller";
-import { PrismaTagRepository } from "./tag/prisma-tag.repository";
-import { ITagRepository } from "./tag/tag-repository.interface";
-import { TagService } from "./tag/tag.service";
+import { PrismaTagRepository } from "./tag/prisma-product-tag.repository";
+import { ITagRepository } from "./tag/product-tag-repository.interface";
+import { ProductTagController } from "./tag/product-tag.controller";
+import { TagService } from "./tag/product-tag.service";
 
 @Module({
   controllers: [

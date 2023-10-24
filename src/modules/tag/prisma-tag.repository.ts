@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { Tag } from "@prisma/client";
 import PrismaService from "@src/databases/prisma/prisma.service";
-import { PaginationQuery } from "@src/modules/common/dtos/pagination.query";
+import { CommonQuery } from "../common/dtos/common.query";
 import { CreateTagRequest } from "./dto/create-tag.request";
 import { UpdateTagRequest } from "./dto/update-tag.request";
 import { ITagRepository } from "./tag-repository.interface";
@@ -18,21 +18,30 @@ export class PrismaTagRepository implements ITagRepository {
     return created;
   }
 
-  async createMany(names: string[]): Promise<{ count: number }> {
-    const input = names.map((name) => {
-      return { name };
+  async createMany(
+    createRequest: CreateTagRequest,
+  ): Promise<{ count: number }> {
+    const { names } = createRequest;
+
+    const input = names.map((value) => {
+      return { name: value };
     });
 
-    const created = await this.db.category.createMany({
+    const createdCount = await this.db.category.createMany({
       data: input,
       skipDuplicates: true,
     });
 
-    return created;
+    return createdCount;
   }
 
-  async findMany(paginationQuery: PaginationQuery): Promise<Tag[]> {
-    const { page, limit } = paginationQuery;
+  async findMany(commonQuery: CommonQuery<Tag>): Promise<Tag[]> {
+    const {
+      pagination: { limit, page },
+      filters,
+      orderBy,
+      include,
+    } = commonQuery;
 
     const take = limit;
     const skip = (page - 1) * limit;
@@ -40,45 +49,35 @@ export class PrismaTagRepository implements ITagRepository {
     const list: Tag[] = await this.db.tag.findMany({
       take,
       skip,
+      where: filters,
+      orderBy,
     });
 
     return list;
   }
 
-  async findManyFromProduct(
-    productId: number,
-    paginationQuery: PaginationQuery,
-  ): Promise<Tag[]> {
-    const { page, limit } = paginationQuery;
+  async findOne(commonQuery: CommonQuery<Tag>): Promise<Tag> {
+    const {
+      pagination: { limit, page },
+      filters,
+      orderBy,
+      include,
+    } = commonQuery;
 
-    const take = limit;
-    const skip = (page - 1) * limit;
-
-    const list: Tag[] = await this.db.tag.findMany({
-      take,
-      skip,
-      where: {
-        productTags: { every: { productId } },
-      },
-    });
-
-    return list;
-  }
-
-  async findById(id: number): Promise<Tag> {
     const item: Tag = await this.db.tag.findFirst({
-      where: { id },
+      where: filters,
+      include,
     });
     return item;
   }
 
   async update(id: number, updateReq: UpdateTagRequest): Promise<Tag> {
-    const { name } = updateReq;
+    const { name, hits } = updateReq;
     return await this.db.tag.update({
       where: {
         id,
       },
-      data: { name },
+      data: { name, hits },
     });
   }
 
@@ -87,17 +86,21 @@ export class PrismaTagRepository implements ITagRepository {
     return removed;
   }
 
-  async incrementHit(id: number): Promise<Tag> {
+  async incrementField(
+    id: number,
+    field: keyof Tag,
+    value: number,
+  ): Promise<Tag> {
     const resource = await this.db.tag.update({
       where: { id },
       data: {
-        hits: { increment: 1 },
+        [field]: { increment: value },
       },
     });
     return resource;
   }
 
-  async countAll(): Promise<number> {
-    return await this.db.tag.count();
+  async countAll(filters: Partial<Tag>): Promise<number> {
+    return await this.db.tag.count({ where: filters });
   }
 }

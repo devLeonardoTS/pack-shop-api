@@ -1,11 +1,11 @@
 import { Type } from "class-transformer";
 import { IsNotEmpty, IsNumber, IsOptional } from "class-validator";
 
-export class CreateProductCategoryRequest {
+export class CreateProductTagRequest {
   @IsNotEmpty()
   @Type(() => Number)
   @IsNumber()
-  categoryId: number;
+  tagId: number;
 
   @IsOptional()
   @Type(() => Number)

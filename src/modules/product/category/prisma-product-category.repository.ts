@@ -12,7 +12,7 @@ export class PrismaProductCategoryRepository
 {
   constructor(private readonly db: PrismaService) {}
 
-  async create(
+  async connect(
     createRequest: CreateProductCategoryRequest,
   ): Promise<ProductCategory> {
     const { categoryId, productId } = createRequest;

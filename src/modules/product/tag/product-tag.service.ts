@@ -1,28 +1,26 @@
 import { Inject, Injectable, NotFoundException } from "@nestjs/common";
-import { ProductCategory } from "@prisma/client";
+import { ProductTag } from "@prisma/client";
 import { CommonQuery } from "@src/modules/common/dtos/common.query";
 import { PaginationResponse } from "@src/modules/common/dtos/pagination.response";
-import { CreateProductCategoryRequest } from "./dto/create-product-category.request";
-import { UpdateProductCategoryRequest } from "./dto/update-product-category.request";
-import { IProductCategoryRepository } from "./product-category-repository.interface";
+import { CreateProductTagRequest } from "./dto/create-product-tag.request";
+import { UpdateProductTagRequest } from "./dto/update-product-tag.request";
+import { IProductTagRepository } from "./product-tag-repository.interface";
 
 @Injectable()
-export class ProductCategoryService {
+export class ProductTagService {
   constructor(
-    @Inject(IProductCategoryRepository)
-    private readonly repository: IProductCategoryRepository,
+    @Inject(IProductTagRepository)
+    private readonly repository: IProductTagRepository,
   ) {}
 
-  async connect(
-    createRequest: CreateProductCategoryRequest,
-  ): Promise<ProductCategory> {
+  async connect(createRequest: CreateProductTagRequest): Promise<ProductTag> {
     const created = await this.repository.connect(createRequest);
     return created;
   }
 
   async findMany(
-    commonQuery: CommonQuery<ProductCategory>,
-  ): Promise<PaginationResponse<ProductCategory>> {
+    commonQuery: CommonQuery<ProductTag>,
+  ): Promise<PaginationResponse<ProductTag>> {
     const {
       pagination: { limit, page },
       filters,
@@ -34,7 +32,7 @@ export class ProductCategoryService {
     const next = pages > 1 && page < pages;
     const data = await this.repository.findMany(commonQuery);
 
-    const result: PaginationResponse<ProductCategory> = {
+    const result: PaginationResponse<ProductTag> = {
       total,
       pages,
       previous,
@@ -45,9 +43,7 @@ export class ProductCategoryService {
     return result;
   }
 
-  async findOne(
-    commonQuery: CommonQuery<ProductCategory>,
-  ): Promise<ProductCategory> {
+  async findOne(commonQuery: CommonQuery<ProductTag>): Promise<ProductTag> {
     const resource = await this.repository.findOne(commonQuery);
     if (!resource) {
       throw new NotFoundException();
@@ -57,8 +53,8 @@ export class ProductCategoryService {
 
   async update(
     id: number,
-    updateRequest: UpdateProductCategoryRequest,
-  ): Promise<ProductCategory> {
+    updateRequest: UpdateProductTagRequest,
+  ): Promise<ProductTag> {
     const updated = await this.repository.update(id, updateRequest);
 
     if (typeof updated === "undefined") {
@@ -68,7 +64,7 @@ export class ProductCategoryService {
     return updated;
   }
 
-  async remove(id: number): Promise<ProductCategory> {
+  async remove(id: number): Promise<ProductTag> {
     return await this.repository.remove(id);
   }
 }
