@@ -10,7 +10,9 @@ export interface IAccountOriginTypeRepository {
   findMany(
     commonQuery: CommonQuery<AccountOriginType>,
   ): Promise<AccountOriginType[]>;
-  findById(id: number): Promise<AccountOriginType>;
+  findOne(
+    commonQuery: CommonQuery<AccountOriginType>,
+  ): Promise<AccountOriginType>;
   update(
     id: number,
     updateReq: UpdateAccountOriginTypeRequest,

@@ -104,9 +104,9 @@ export class PrismaConsumerRepository implements IConsumerRepository {
   }
 
   async checkAlreadySpecialized(profileId: number): Promise<boolean> {
-    const profile = (await this.profileService.findById(
-      profileId,
-    )) as Prisma.ProfileGetPayload<{
+    const profile = (await this.profileService.findOne({
+      filters: { id: profileId },
+    })) as Prisma.ProfileGetPayload<{
       include: { business: true; consumer: true };
     }>;
 

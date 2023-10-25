@@ -44,9 +44,19 @@ export class PrismaAccountRoleTypeRepository
     return list;
   }
 
-  async findById(id: number): Promise<AccountRoleType> {
+  async findOne(
+    commonQuery: CommonQuery<AccountRoleType>,
+  ): Promise<AccountRoleType> {
+    const {
+      pagination: { limit, page },
+      filters,
+      orderBy,
+      include,
+    } = commonQuery;
+
     const item: AccountRoleType = await this.db.accountRoleType.findFirst({
-      where: { id },
+      where: filters,
+      include,
     });
     return item;
   }

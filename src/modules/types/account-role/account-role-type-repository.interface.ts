@@ -8,7 +8,7 @@ export interface IAccountRoleTypeRepository {
   findMany(
     commonQuery: CommonQuery<AccountRoleType>,
   ): Promise<AccountRoleType[]>;
-  findById(id: number): Promise<AccountRoleType>;
+  findOne(commonQuery: CommonQuery<AccountRoleType>): Promise<AccountRoleType>;
   update(
     id: number,
     updateReq: UpdateAccountRoleTypeRequest,

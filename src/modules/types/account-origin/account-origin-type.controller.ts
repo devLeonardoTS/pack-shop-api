@@ -12,7 +12,7 @@ import {
 import { AccountOriginType, UserAccount } from "@prisma/client";
 import { CommonQuery } from "@src/modules/common/dtos/common.query";
 import { PaginationResponse } from "@src/modules/common/dtos/pagination.response";
-import { UserAccountService } from "@src/modules/user-account/services/user-account.service";
+import { UserAccountService } from "@src/modules/user-account/user-account.service";
 import { AccountOriginTypeService } from "./account-origin-type.service";
 import { CreateAccountOriginTypeRequest } from "./dtos/create-account-origin-type.request";
 import { UpdateAccountOriginTypeRequest } from "./dtos/update-account-origin-type.request";
@@ -42,8 +42,10 @@ export class AccountOriginTypeController {
   @Get(":id")
   async findById(
     @Param("id", ParseIntPipe) id: number,
+    @Query() query: CommonQuery<AccountOriginType>,
   ): Promise<AccountOriginType> {
-    return this.accountOriginTypeService.findById(id);
+    query.filters.id = id;
+    return this.accountOriginTypeService.findOne(query);
   }
 
   @Put(":id")

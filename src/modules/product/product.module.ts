@@ -13,26 +13,24 @@ import { PrismaProductRepository } from "./prisma-product.repository";
 import { IProductRepository } from "./product-repository.interface";
 import { ProductController } from "./product.controller";
 import { ProductService } from "./product.service";
-import { TagController } from "./tag/controllers/tag.controller";
-import { PrismaTagRepository } from "./tag/prisma-product-tag.repository";
-import { ITagRepository } from "./tag/product-tag-repository.interface";
+import { PrismaProductTagRepository } from "./tag/prisma-product-tag.repository";
+import { IProductTagRepository } from "./tag/product-tag-repository.interface";
 import { ProductTagController } from "./tag/product-tag.controller";
-import { TagService } from "./tag/product-tag.service";
+import { ProductTagService } from "./tag/product-tag.service";
 
 @Module({
   controllers: [
-    TagController,
     ProductTagController,
     ProductCategoryController,
     ProductController,
     ProductImageController,
   ],
   providers: [
-    TagService,
+    ProductTagService,
     ProductCategoryService,
     ProductService,
     ProductImageService,
-    { provide: ITagRepository, useClass: PrismaTagRepository },
+    { provide: IProductTagRepository, useClass: PrismaProductTagRepository },
     {
       provide: IProductCategoryRepository,
       useClass: PrismaProductCategoryRepository,
@@ -43,7 +41,12 @@ import { TagService } from "./tag/product-tag.service";
       useClass: PrismaProductImageRepository,
     },
   ],
-  exports: [ProductService],
+  exports: [
+    ProductService,
+    ProductTagService,
+    ProductCategoryService,
+    ProductImageService,
+  ],
   imports: [ImageModule, UploadModule],
 })
 export class ProductModule {}

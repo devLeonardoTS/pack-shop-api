@@ -2,9 +2,9 @@ import { Injectable } from "@nestjs/common";
 import { UserAccount } from "@prisma/client";
 import PrismaService from "@src/databases/prisma/prisma.service";
 import { CommonQuery } from "@src/modules/common/dtos/common.query";
-import { CreateUserAccountRequest } from "../dtos/create-user-account.request";
-import { UpdateUserAccountRequest } from "../dtos/update-user-account.request";
-import { IUserAccountRepository } from "../interfaces/user-account-repository.interface";
+import { CreateUserAccountRequest } from "./dtos/create-user-account.request";
+import { UpdateUserAccountRequest } from "./dtos/update-user-account.request";
+import { IUserAccountRepository } from "./user-account-repository.interface";
 
 @Injectable()
 export class PrismaUserAccountRepository implements IUserAccountRepository {
@@ -33,6 +33,7 @@ export class PrismaUserAccountRepository implements IUserAccountRepository {
       pagination: { limit, page },
       filters,
       orderBy,
+      include,
     } = commonQuery;
 
     const take = limit;
@@ -43,39 +44,29 @@ export class PrismaUserAccountRepository implements IUserAccountRepository {
       skip,
       where: filters,
       orderBy,
-      include: { originType: true, roleType: true },
+      include: {
+        ...include,
+        roleType: true,
+        originType: true,
+        profile: true,
+      },
     });
 
     return list;
   }
 
-  async findById(id: number): Promise<UserAccount> {
-    const resource: UserAccount = await this.db.userAccount.findFirst({
-      where: { id },
-      include: {
-        originType: true,
-        roleType: true,
-        profile: {
-          include: {
-            business: { include: { businessType: true } },
-            consumer: true,
-            addresses: true,
-            profileImages: {
-              where: {
-                image: { imageType: { type: { contains: "AVATAR " } } },
-              },
-            },
-          },
-        },
-      },
-    });
-    return resource;
-  }
+  async findOne(commonQuery: CommonQuery<UserAccount>): Promise<UserAccount> {
+    const {
+      pagination: { limit, page },
+      filters,
+      orderBy,
+      include,
+    } = commonQuery;
 
-  async findByEmail(email: string): Promise<UserAccount> {
-    const resource: UserAccount = await this.db.userAccount.findFirst({
-      where: { email },
+    const item: UserAccount = await this.db.userAccount.findFirst({
+      where: filters,
       include: {
+        ...include,
         originType: true,
         roleType: true,
         profile: {
@@ -83,16 +74,19 @@ export class PrismaUserAccountRepository implements IUserAccountRepository {
             business: { include: { businessType: true } },
             consumer: true,
             addresses: true,
+            phones: {
+              where: { isPrimary: true },
+            },
             profileImages: {
               where: {
-                image: { imageType: { type: { contains: "AVATAR " } } },
+                image: { imageType: { type: { contains: "AVATAR" } } },
               },
             },
           },
         },
       },
     });
-    return resource;
+    return item;
   }
 
   async update(
@@ -119,9 +113,12 @@ export class PrismaUserAccountRepository implements IUserAccountRepository {
             business: { include: { businessType: true } },
             consumer: true,
             addresses: true,
+            phones: {
+              where: { isPrimary: true },
+            },
             profileImages: {
               where: {
-                image: { imageType: { type: { contains: "AVATAR " } } },
+                image: { imageType: { type: { contains: "AVATAR" } } },
               },
             },
           },

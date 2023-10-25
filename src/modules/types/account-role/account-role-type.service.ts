@@ -45,13 +45,13 @@ export class AccountRoleTypeService {
     return result;
   }
 
-  async findById(id: number): Promise<AccountRoleType> {
-    const resource = await this.repository.findById(id);
-
-    if (typeof resource === "undefined") {
+  async findOne(
+    commonQuery: CommonQuery<AccountRoleType>,
+  ): Promise<AccountRoleType> {
+    const resource = await this.repository.findOne(commonQuery);
+    if (!resource) {
       throw new NotFoundException();
     }
-
     return resource;
   }
 

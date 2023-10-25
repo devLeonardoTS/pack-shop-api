@@ -1,12 +1,14 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { Test, TestingModule } from "@nestjs/testing";
+import { UserAccount } from "@prisma/client";
 import { AppHttpSetup } from "@src/app-http.setup";
 import PrismaService from "@src/databases/prisma/prisma.service";
 import { GlobalServicesModule } from "@src/global-services.module";
+import { EAccountOriginType } from "@src/modules/types/account-origin/account-origin-type.enum";
+import { EAccountRoleType } from "@src/modules/types/account-role/account-role-type.enum";
 import { CreateUserAccountRequest } from "@src/modules/user-account/dtos/create-user-account.request";
 import { UpdateUserAccountRequest } from "@src/modules/user-account/dtos/update-user-account.request";
-import { UserAccount } from "@src/modules/user-account/entities/user-account.entity";
 import { UserAccountModule } from "@src/modules/user-account/user-account.module";
 import { BaseConfigsSeeder } from "prisma/seeders/base-configs-seeder";
 import { SeedFactory } from "prisma/utils/seed-factory";
@@ -46,8 +48,8 @@ describe("user-account module", () => {
       it("Should create new User Account when receives valid input, returning created resource", async () => {
         const input: CreateUserAccountRequest = {
           email: "e2e-test-create@example.com",
-          originTypeId: 1,
-          roleTypeId: 1,
+          originType: EAccountOriginType.LOCAL,
+          roleType: EAccountRoleType.ADMIN,
           password: "adm123",
           confirmPassword: "adm123",
         };
@@ -59,6 +61,7 @@ describe("user-account module", () => {
           email: input.email,
           password: expect.any(String),
           isActive: expect.any(Boolean),
+          isConfirmed: expect.any(Boolean),
           createdAt: expect.any(String),
           updatedAt: expect.any(String),
         });
@@ -75,8 +78,8 @@ describe("user-account module", () => {
         it("Receives invalid e-mail, returning error details", async () => {
           const input: CreateUserAccountRequest = {
             email: "e2e-test-invalid-email",
-            originTypeId: 1,
-            roleTypeId: 1,
+            originType: EAccountOriginType.LOCAL,
+            roleType: EAccountRoleType.ADMIN,
             password: "??",
             confirmPassword: "???",
           };
@@ -98,8 +101,8 @@ describe("user-account module", () => {
         it("Receives invalid account role or type, returning error details", async () => {
           const input: CreateUserAccountRequest = {
             email: "e2e-test-create@example.com",
-            originTypeId: 999,
-            roleTypeId: 999,
+            originType: "NOT_EXISTING_TYPE" as EAccountOriginType,
+            roleType: "NOT_EXISTING_TYPE" as EAccountRoleType,
             password: "my-Okay-Passw0rd",
             confirmPassword: "my-Okay-Passw0rd",
           };
@@ -121,8 +124,8 @@ describe("user-account module", () => {
         it("Receives mismatching password confirmation, returning error details", async () => {
           const input: CreateUserAccountRequest = {
             email: "e2e-test-create@example.com",
-            originTypeId: 1,
-            roleTypeId: 1,
+            originType: EAccountOriginType.LOCAL,
+            roleType: EAccountRoleType.ADMIN,
             password: "??",
             confirmPassword: "???",
           };
@@ -146,8 +149,8 @@ describe("user-account module", () => {
         it("Receives existing email, returning error details", async () => {
           const input: CreateUserAccountRequest = {
             email: "e2e-test-create@example.com",
-            originTypeId: 1,
-            roleTypeId: 1,
+            originType: EAccountOriginType.LOCAL,
+            roleType: EAccountRoleType.ADMIN,
             password: "adm123",
             confirmPassword: "adm123",
           };
@@ -177,11 +180,12 @@ describe("user-account module", () => {
           data: expect.arrayContaining<UserAccount>([
             {
               id: expect.any(Number),
-              email: expect.any(String),
-              isActive: expect.any(Boolean),
               originTypeId: expect.any(Number),
-              password: expect.any(String),
               roleTypeId: expect.any(Number),
+              email: expect.any(String),
+              password: expect.any(String),
+              isActive: expect.any(Boolean),
+              isConfirmed: expect.any(Boolean),
               createdAt: expect.any(String),
               updatedAt: expect.any(String),
             },
@@ -204,11 +208,12 @@ describe("user-account module", () => {
             data: expect.arrayContaining<UserAccount>([
               {
                 id: expect.any(Number),
-                email: expect.any(String),
-                isActive: expect.any(Boolean),
                 originTypeId: expect.any(Number),
-                password: expect.any(String),
                 roleTypeId: expect.any(Number),
+                email: expect.any(String),
+                password: expect.any(String),
+                isActive: expect.any(Boolean),
+                isConfirmed: expect.any(Boolean),
                 createdAt: expect.any(String),
                 updatedAt: expect.any(String),
               },
@@ -236,11 +241,12 @@ describe("user-account module", () => {
 
         const expected = expect.objectContaining<UserAccount>({
           id: expect.any(Number),
-          email: expect.any(String),
-          isActive: expect.any(Boolean),
           originTypeId: expect.any(Number),
-          password: expect.any(String),
           roleTypeId: expect.any(Number),
+          email: expect.any(String),
+          password: expect.any(String),
+          isActive: expect.any(Boolean),
+          isConfirmed: expect.any(Boolean),
           createdAt: expect.any(String),
           updatedAt: expect.any(String),
         });
@@ -267,10 +273,11 @@ describe("user-account module", () => {
         const expected = expect.objectContaining<Omit<UserAccount, "password">>(
           {
             id: expect.any(Number),
-            email: expect.any(String),
-            isActive: expect.any(Boolean),
             originTypeId: expect.any(Number),
             roleTypeId: expect.any(Number),
+            email: expect.any(String),
+            isActive: expect.any(Boolean),
+            isConfirmed: expect.any(Boolean),
             createdAt: expect.any(String),
             updatedAt: expect.any(String),
           },
@@ -341,10 +348,11 @@ describe("user-account module", () => {
         const expected = expect.objectContaining<Omit<UserAccount, "password">>(
           {
             id: expect.any(Number),
-            email: expect.any(String),
-            isActive: expect.any(Boolean),
             originTypeId: expect.any(Number),
             roleTypeId: expect.any(Number),
+            email: expect.any(String),
+            isActive: expect.any(Boolean),
+            isConfirmed: expect.any(Boolean),
             createdAt: expect.any(String),
             updatedAt: expect.any(String),
           },

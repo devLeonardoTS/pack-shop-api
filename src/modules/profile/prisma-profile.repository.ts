@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { Profile } from "@prisma/client";
 import PrismaService from "@src/databases/prisma/prisma.service";
-import { PaginationQuery } from "@src/modules/common/dtos/pagination.query";
+import { CommonQuery } from "../common/dtos/common.query";
 import { CreateProfileRequest } from "./dto/create-profile.request";
 import { UpdateProfileRequest } from "./dto/update-profile.request";
 import { IProfileRepository } from "./profile-repository.interface";
@@ -19,11 +19,7 @@ export class PrismaProfileRepository implements IProfileRepository {
         isSubscribedToOffers,
       },
       include: {
-        business: {
-          include: {
-            businessType: true,
-          },
-        },
+        business: true,
         consumer: true,
       },
     });
@@ -31,8 +27,13 @@ export class PrismaProfileRepository implements IProfileRepository {
     return created;
   }
 
-  async findMany(paginationQuery: PaginationQuery): Promise<Profile[]> {
-    const { page, limit } = paginationQuery;
+  async findMany(commonQuery: CommonQuery<Profile>): Promise<Profile[]> {
+    const {
+      pagination: { limit, page },
+      filters,
+      orderBy,
+      include,
+    } = commonQuery;
 
     const take = limit;
     const skip = (page - 1) * limit;
@@ -40,8 +41,11 @@ export class PrismaProfileRepository implements IProfileRepository {
     const list: Profile[] = await this.db.profile.findMany({
       take,
       skip,
+      where: filters,
+      orderBy,
       include: {
-        business: { include: { businessType: true } },
+        ...include,
+        business: true,
         consumer: true,
       },
     });
@@ -49,24 +53,17 @@ export class PrismaProfileRepository implements IProfileRepository {
     return list;
   }
 
-  async findById(id: number): Promise<Profile> {
-    const item: Profile = await this.db.profile.findFirst({
-      where: { id },
-      include: {
-        business: { include: { businessType: true } },
-        consumer: true,
-      },
-    });
-    return item;
-  }
+  async findOne(commonQuery: CommonQuery<Profile>): Promise<Profile> {
+    const {
+      pagination: { limit, page },
+      filters,
+      orderBy,
+      include,
+    } = commonQuery;
 
-  async findByOwnerId(userAccountId: number): Promise<Profile> {
     const item: Profile = await this.db.profile.findFirst({
-      where: { userAccountId },
-      include: {
-        business: { include: { businessType: true } },
-        consumer: true,
-      },
+      where: filters,
+      include,
     });
     return item;
   }
@@ -97,14 +94,14 @@ export class PrismaProfileRepository implements IProfileRepository {
     const removed = await this.db.profile.delete({
       where: { id },
       include: {
-        business: { include: { businessType: true } },
+        business: true,
         consumer: true,
       },
     });
     return removed;
   }
 
-  async countAll(): Promise<number> {
-    return await this.db.profile.count();
+  async countAll(filters: Partial<Profile>): Promise<number> {
+    return await this.db.profile.count({ where: filters });
   }
 }

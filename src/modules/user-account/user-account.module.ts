@@ -6,9 +6,9 @@ import { IAccountRoleTypeRepository } from "../types/account-role/account-role-t
 import { AccountRoleTypeService } from "../types/account-role/account-role-type.service";
 import { PrismaAccountRoleTypeRepository } from "../types/account-role/prisma-account-role-type.repository";
 import { UserAccountController } from "./controllers/user-account.controller";
-import { IUserAccountRepository } from "./interfaces/user-account-repository.interface";
-import { PrismaUserAccountRepository } from "./repositories/prisma-user-account.repository";
-import { UserAccountService } from "./services/user-account.service";
+import { PrismaUserAccountRepository } from "./prisma-user-account.repository";
+import { IUserAccountRepository } from "./user-account-repository.interface";
+import { UserAccountService } from "./user-account.service";
 
 @Module({
   controllers: [UserAccountController],

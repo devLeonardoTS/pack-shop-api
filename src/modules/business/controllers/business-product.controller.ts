@@ -25,20 +25,16 @@ export class BusinessProductController {
     @Param("businessId", ParseIntPipe) businessId: number,
     @Body() createRequest: CreateProductRequest,
   ): Promise<Product> {
-    if (!createRequest.businessId) {
-      createRequest.businessId = businessId;
-    }
+    createRequest.businessId = businessId;
     return await this.productService.create(createRequest);
   }
 
   @Get()
-  async findManyByParentId(
+  async findMany(
     @Param("businessId", ParseIntPipe) businessId: number,
     @Query() query: CommonQuery<Product>,
   ): Promise<PaginationResponse<Product>> {
-    if (!query.filters.businessId) {
-      query.filters.businessId = businessId;
-    }
+    query.filters.businessId = businessId;
     return this.productService.findMany(query);
   }
 }

@@ -1,7 +1,7 @@
 import { Inject, Injectable, NotFoundException } from "@nestjs/common";
 import { Profile } from "@prisma/client";
-import { PaginationQuery } from "@src/modules/common/dtos/pagination.query";
 import { PaginationResponse } from "@src/modules/common/dtos/pagination.response";
+import { CommonQuery } from "../common/dtos/common.query";
 import { CreateProfileRequest } from "./dto/create-profile.request";
 import { UpdateProfileRequest } from "./dto/update-profile.request";
 import { IProfileRepository } from "./profile-repository.interface";
@@ -19,15 +19,18 @@ export class ProfileService {
   }
 
   async findMany(
-    paginatedRequest: PaginationQuery,
+    commonQuery: CommonQuery<Profile>,
   ): Promise<PaginationResponse<Profile>> {
-    const { page, limit } = paginatedRequest;
+    const {
+      pagination: { limit, page },
+      filters,
+    } = commonQuery;
 
-    const total = await this.repository.countAll();
+    const total = await this.repository.countAll(filters);
     const pages = Math.ceil(total / limit);
     const previous = page > 1 && page <= pages;
     const next = pages > 1 && page < pages;
-    const data = await this.repository.findMany(paginatedRequest);
+    const data = await this.repository.findMany(commonQuery);
 
     const result: PaginationResponse<Profile> = {
       total,
@@ -40,23 +43,11 @@ export class ProfileService {
     return result;
   }
 
-  async findById(id: number): Promise<Profile> {
-    const resource = await this.repository.findById(id);
-
+  async findOne(commonQuery: CommonQuery<Profile>): Promise<Profile> {
+    const resource = await this.repository.findOne(commonQuery);
     if (!resource) {
       throw new NotFoundException();
     }
-
-    return resource;
-  }
-
-  async findByOwnerId(userAccountId: number): Promise<Profile> {
-    const resource = await this.repository.findByOwnerId(userAccountId);
-
-    if (!resource) {
-      throw new NotFoundException();
-    }
-
     return resource;
   }
 

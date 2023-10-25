@@ -12,7 +12,7 @@ import {
 import { AccountRoleType, UserAccount } from "@prisma/client";
 import { CommonQuery } from "@src/modules/common/dtos/common.query";
 import { PaginationResponse } from "@src/modules/common/dtos/pagination.response";
-import { UserAccountService } from "@src/modules/user-account/services/user-account.service";
+import { UserAccountService } from "@src/modules/user-account/user-account.service";
 import { AccountRoleTypeService } from "./account-role-type.service";
 import { CreateAccountRoleTypeRequest } from "./dtos/create-account-role-type.request";
 import { UpdateAccountRoleTypeRequest } from "./dtos/update-account-role-type.request";
@@ -42,8 +42,10 @@ export class AccountRoleTypeController {
   @Get(":id")
   async findById(
     @Param("id", ParseIntPipe) id: number,
+    @Query() query: CommonQuery<AccountRoleType>,
   ): Promise<AccountRoleType> {
-    return this.accountRoleTypeService.findById(id);
+    query.filters.id = id;
+    return this.accountRoleTypeService.findOne(query);
   }
 
   @Put(":id")

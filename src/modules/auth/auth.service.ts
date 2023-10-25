@@ -1,8 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
+import { UserAccount } from "@prisma/client";
 import * as bcrypt from "bcrypt";
-import { UserAccount } from "../user-account/entities/user-account.entity";
-import { UserAccountService } from "../user-account/services/user-account.service";
+import { UserAccountService } from "../user-account/user-account.service";
 import { JwtValidatePayload } from "./jwt.strategy";
 
 @Injectable()
@@ -15,7 +15,9 @@ export class AuthService {
   async validateUser(email: string, password: string) {
     let userAccount: UserAccount;
     try {
-      userAccount = await this.userAccountService.findByEmail(email);
+      userAccount = await this.userAccountService.findOne({
+        filters: { email },
+      });
     } catch {}
 
     if (!password || !userAccount?.password) {

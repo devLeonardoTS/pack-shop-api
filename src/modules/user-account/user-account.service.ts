@@ -9,21 +9,24 @@ import { UserAccount } from "@prisma/client";
 import { CommonQuery } from "@src/modules/common/dtos/common.query";
 import { PaginationResponse } from "@src/modules/common/dtos/pagination.response";
 import * as bcrypt from "bcrypt";
-import { CreateUserAccountRequest } from "../dtos/create-user-account.request";
-import { UpdateUserAccountRequest } from "../dtos/update-user-account.request";
-import { IUserAccountRepository } from "../interfaces/user-account-repository.interface";
+import { CreateUserAccountRequest } from "./dtos/create-user-account.request";
+import { UpdateUserAccountRequest } from "./dtos/update-user-account.request";
+import { IUserAccountRepository } from "./user-account-repository.interface";
 
 @Injectable()
 export class UserAccountService {
+  private readonly passwordMatchErrorMsg =
+    "Password and Confirmation Password does not match.";
+
   constructor(
     @Inject(IUserAccountRepository)
-    private readonly userAccountRepository: IUserAccountRepository,
+    private readonly repository: IUserAccountRepository,
   ) {}
 
   async create(createRequest: CreateUserAccountRequest): Promise<UserAccount> {
     createRequest = await this.createAccountValidation(createRequest);
 
-    const resource = await this.userAccountRepository.create(createRequest);
+    const resource = await this.repository.create(createRequest);
 
     return resource;
   }
@@ -36,11 +39,11 @@ export class UserAccountService {
       filters,
     } = commonQuery;
 
-    const total = await this.userAccountRepository.countAll(filters);
+    const total = await this.repository.countAll(filters);
     const pages = Math.ceil(total / limit);
     const previous = page > 1 && page <= pages;
     const next = pages > 1 && page < pages;
-    const data = await this.userAccountRepository.findMany(commonQuery);
+    const data = await this.repository.findMany(commonQuery);
 
     const result: PaginationResponse<UserAccount> = {
       total,
@@ -53,23 +56,11 @@ export class UserAccountService {
     return result;
   }
 
-  async findById(id: number): Promise<UserAccount> {
-    const resource = await this.userAccountRepository.findById(id);
-
-    if (typeof resource === "undefined") {
+  async findOne(commonQuery: CommonQuery<UserAccount>): Promise<UserAccount> {
+    const resource = await this.repository.findOne(commonQuery);
+    if (!resource) {
       throw new NotFoundException();
     }
-
-    return resource;
-  }
-
-  async findByEmail(email: string): Promise<UserAccount> {
-    const resource = await this.userAccountRepository.findByEmail(email);
-
-    if (typeof resource === "undefined") {
-      throw new NotFoundException();
-    }
-
     return resource;
   }
 
@@ -79,7 +70,7 @@ export class UserAccountService {
   ): Promise<UserAccount> {
     updateRequest = await this.updateAccountValidation(id, updateRequest);
 
-    const resource = await this.userAccountRepository.update(id, updateRequest);
+    const resource = await this.repository.update(id, updateRequest);
 
     if (typeof resource === "undefined") {
       throw new NotFoundException();
@@ -89,16 +80,16 @@ export class UserAccountService {
   }
 
   async remove(id: number): Promise<UserAccount> {
-    const resource = await this.userAccountRepository.remove(id);
+    const resource = await this.repository.remove(id);
     return resource;
   }
 
-  async passwordEncryption(data: string): Promise<string> {
+  private async passwordEncryption(data: string): Promise<string> {
     const salt = await bcrypt.genSalt();
     return await bcrypt.hash(data, salt);
   }
 
-  async createAccountValidation(
+  private async createAccountValidation(
     createRequest: CreateUserAccountRequest,
   ): Promise<CreateUserAccountRequest> {
     const hasPassword =
@@ -108,9 +99,7 @@ export class UserAccountService {
       createRequest.password === createRequest.confirmPassword;
 
     if (!hasPassword || !isPasswordConfirmed) {
-      throw new BadRequestException(
-        "Password and Confirmation Password does not match.",
-      );
+      throw new BadRequestException(this.passwordMatchErrorMsg);
     }
 
     // Encrypt
@@ -121,11 +110,11 @@ export class UserAccountService {
     return createRequest;
   }
 
-  async updateAccountValidation(
+  private async updateAccountValidation(
     id: number,
     updateRequest: UpdateUserAccountRequest,
   ): Promise<UpdateUserAccountRequest> {
-    const userAccount = await this.userAccountRepository.findById(id);
+    const userAccount = await this.repository.findOne({ filters: { id } });
 
     const isPasswordValid = await bcrypt.compare(
       updateRequest.currentPassword,
@@ -144,9 +133,7 @@ export class UserAccountService {
       updateRequest.newPassword === updateRequest.confirmNewPassword;
 
     if (!hasNewPassword || !isPasswordConfirmed) {
-      throw new BadRequestException(
-        "Password and Confirmation Password does not match.",
-      );
+      throw new BadRequestException(this.passwordMatchErrorMsg);
     }
 
     // Encrypt

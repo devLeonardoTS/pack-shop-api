@@ -44,9 +44,19 @@ export class PrismaAccountOriginTypeRepository
     return list;
   }
 
-  async findById(id: number): Promise<AccountOriginType> {
+  async findOne(
+    commonQuery: CommonQuery<AccountOriginType>,
+  ): Promise<AccountOriginType> {
+    const {
+      pagination: { limit, page },
+      filters,
+      orderBy,
+      include,
+    } = commonQuery;
+
     const item: AccountOriginType = await this.db.accountOriginType.findFirst({
-      where: { id },
+      where: filters,
+      include,
     });
     return item;
   }

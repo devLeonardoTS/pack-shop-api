@@ -9,12 +9,12 @@ import {
   Put,
   Query,
 } from "@nestjs/common";
+import { UserAccount } from "@prisma/client";
 import { CommonQuery } from "@src/modules/common/dtos/common.query";
 import { PaginationResponse } from "@src/modules/common/dtos/pagination.response";
 import { CreateUserAccountRequest } from "../dtos/create-user-account.request";
 import { UpdateUserAccountRequest } from "../dtos/update-user-account.request";
-import { UserAccount } from "../entities/user-account.entity";
-import { UserAccountService } from "../services/user-account.service";
+import { UserAccountService } from "../user-account.service";
 
 @Controller("user-account")
 export class UserAccountController {
@@ -36,8 +36,12 @@ export class UserAccountController {
   }
 
   @Get(":id")
-  async findById(@Param("id", ParseIntPipe) id: number): Promise<UserAccount> {
-    return this.userAccountService.findById(id);
+  async findById(
+    @Param("id", ParseIntPipe) id: number,
+    @Query() query: CommonQuery<UserAccount>,
+  ): Promise<UserAccount> {
+    query.filters.id = id;
+    return this.userAccountService.findOne(query);
   }
 
   @Put(":id")

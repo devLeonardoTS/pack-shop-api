@@ -1,4 +1,4 @@
-import { UserAccount } from "@src/modules/user-account/entities/user-account.entity";
+import { UserAccount } from "@prisma/client";
 import * as bcrypt from "bcrypt";
 
 export async function createUserAccounts() {
@@ -10,6 +10,7 @@ export async function createUserAccounts() {
       originTypeId: 1,
       roleTypeId: 1,
       isActive: true,
+      isConfirmed: false,
       email: "admin@packshop.com",
       password,
     },

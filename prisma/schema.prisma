@@ -38,8 +38,8 @@ model UserAccount {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  isActive Boolean @default(true)
-  isConfirmed Boolean @default(false)
+  isActive Boolean? @default(true)
+  isConfirmed Boolean? @default(false)
 
   email String? @db.VarChar(255) @unique
   password String? @db.VarChar(255)
@@ -150,7 +150,7 @@ model Phone {
 
   number String @db.VarChar(15)
 
-  isPrimary Boolean @default(false)
+  isPrimary Boolean? @default(false)
 
   phoneTypeId Int
   phoneType PhoneType @relation(fields: [phoneTypeId], references: [id])
@@ -226,7 +226,7 @@ model Address {
   estado String @db.VarChar(255)
   pais String @db.VarChar(255)
 
-  isPrimary Boolean @default(true)
+  isPrimary Boolean? @default(true)
 
   title String @db.VarChar(255)
   description String @db.VarChar(255)
@@ -279,7 +279,7 @@ model Product {
   manufacturedAt DateTime
   expiresAt DateTime
   
-  isAvailable Boolean @default(false)
+  isAvailable Boolean? @default(false)
 
   slug String? @db.VarChar(255) @default(uuid())
 
