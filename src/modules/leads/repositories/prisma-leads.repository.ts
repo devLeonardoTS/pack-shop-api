@@ -16,11 +16,9 @@ export class PrismaLeadsRepository implements ILeadsRepository {
     return created;
   }
   async findMany(commonQuery: CommonQuery<Lead>): Promise<Lead[]> {
-    const {
-      pagination: { limit, page },
-      filters,
-      orderBy,
-    } = commonQuery;
+    const { filters, orderBy } = commonQuery;
+
+    const { limit, page } = { ...commonQuery.pagination };
 
     const take = limit;
     const skip = (page - 1) * limit;

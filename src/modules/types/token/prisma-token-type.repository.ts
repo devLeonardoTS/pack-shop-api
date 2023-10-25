@@ -19,12 +19,9 @@ export class PrismaTokenTypeRepository implements ITokenTypeRepository {
   }
 
   async findMany(commonQuery: CommonQuery<TokenType>): Promise<TokenType[]> {
-    const {
-      pagination: { limit, page },
-      filters,
-      orderBy,
-      include,
-    } = commonQuery;
+    const { filters, orderBy, include } = commonQuery;
+
+    const { limit, page } = { ...commonQuery.pagination };
 
     const take = limit;
     const skip = (page - 1) * limit;
@@ -40,12 +37,9 @@ export class PrismaTokenTypeRepository implements ITokenTypeRepository {
   }
 
   async findOne(commonQuery: CommonQuery<TokenType>): Promise<TokenType> {
-    const {
-      pagination: { limit, page },
-      filters,
-      orderBy,
-      include,
-    } = commonQuery;
+    const { filters, orderBy, include } = commonQuery;
+
+    const { limit, page } = { ...commonQuery.pagination };
 
     const item: TokenType = await this.db.tokenType.findFirst({
       where: filters,

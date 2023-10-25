@@ -37,12 +37,9 @@ export class PrismaConsumerRepository implements IConsumerRepository {
   }
 
   async findMany(commonQuery: CommonQuery<Consumer>): Promise<Consumer[]> {
-    const {
-      pagination: { limit, page },
-      filters,
-      orderBy,
-      include,
-    } = commonQuery;
+    const { filters, orderBy, include } = commonQuery;
+
+    const { limit, page } = { ...commonQuery.pagination };
 
     const take = limit;
     const skip = (page - 1) * limit;
@@ -59,12 +56,9 @@ export class PrismaConsumerRepository implements IConsumerRepository {
   }
 
   async findOne(commonQuery: CommonQuery<Consumer>): Promise<Consumer> {
-    const {
-      pagination: { limit, page },
-      filters,
-      orderBy,
-      include,
-    } = commonQuery;
+    const { filters, orderBy, include } = commonQuery;
+
+    const { limit, page } = { ...commonQuery.pagination };
 
     const item: Consumer = await this.db.consumer.findFirst({
       where: filters,

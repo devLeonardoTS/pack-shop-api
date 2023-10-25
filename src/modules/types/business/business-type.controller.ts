@@ -40,8 +40,12 @@ export class BusinessTypeController {
   }
 
   @Get(":id")
-  async findById(@Param("id", ParseIntPipe) id: number): Promise<BusinessType> {
-    return this.businessTypeService.findById(id);
+  async findById(
+    @Param("id", ParseIntPipe) id: number,
+    @Query() query: CommonQuery<BusinessType>,
+  ): Promise<BusinessType> {
+    query.filters.id = id;
+    return this.businessTypeService.findOne(query);
   }
 
   @Put(":id")

@@ -42,9 +42,7 @@ export class MemoryLeadsRepository implements ILeadsRepository {
     return created;
   }
   async findMany(commonQuery: CommonQuery<Lead>): Promise<Lead[]> {
-    const {
-      pagination: { limit, page },
-    } = commonQuery;
+    const { limit, page } = { ...commonQuery.pagination };
 
     const take = limit;
     const skip = (page - 1) * limit;

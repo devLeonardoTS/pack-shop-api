@@ -95,12 +95,9 @@ export class PrismaProductRepository implements IProductRepository {
   }
 
   async findMany(commonQuery: CommonQuery<Product>): Promise<Product[]> {
-    const {
-      pagination: { limit, page },
-      filters,
-      orderBy,
-      include,
-    } = commonQuery;
+    const { filters, orderBy, include } = commonQuery;
+
+    const { limit, page } = { ...commonQuery.pagination };
 
     const take = limit;
     const skip = (page - 1) * limit;
@@ -117,12 +114,9 @@ export class PrismaProductRepository implements IProductRepository {
   }
 
   async findOne(commonQuery: CommonQuery<Product>): Promise<Product> {
-    const {
-      pagination: { limit, page },
-      filters,
-      orderBy,
-      include,
-    } = commonQuery;
+    const { filters, orderBy, include } = commonQuery;
+
+    const { limit, page } = { ...commonQuery.pagination };
 
     const item: Product = await this.db.product.findFirst({
       where: filters,

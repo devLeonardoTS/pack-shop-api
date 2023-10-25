@@ -23,11 +23,9 @@ export class PrismaBusinessTypeRepository implements IBusinessTypeRepository {
   async findMany(
     commonQuery: CommonQuery<BusinessType>,
   ): Promise<BusinessType[]> {
-    const {
-      pagination: { limit, page },
-      filters,
-      orderBy,
-    } = commonQuery;
+    const { filters, orderBy } = commonQuery;
+
+    const { limit, page } = { ...commonQuery.pagination };
 
     const take = limit;
     const skip = (page - 1) * limit;
@@ -42,9 +40,14 @@ export class PrismaBusinessTypeRepository implements IBusinessTypeRepository {
     return list;
   }
 
-  async findById(id: number): Promise<BusinessType> {
+  async findOne(commonQuery: CommonQuery<BusinessType>): Promise<BusinessType> {
+    const { filters, orderBy, include } = commonQuery;
+
+    const { limit, page } = { ...commonQuery.pagination };
+
     const item: BusinessType = await this.db.businessType.findFirst({
-      where: { id },
+      where: filters,
+      include,
     });
     return item;
   }

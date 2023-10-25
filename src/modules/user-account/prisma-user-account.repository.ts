@@ -29,12 +29,9 @@ export class PrismaUserAccountRepository implements IUserAccountRepository {
   async findMany(
     commonQuery: CommonQuery<UserAccount>,
   ): Promise<UserAccount[]> {
-    const {
-      pagination: { limit, page },
-      filters,
-      orderBy,
-      include,
-    } = commonQuery;
+    const { filters, orderBy, include } = commonQuery;
+
+    const { limit, page } = { ...commonQuery.pagination };
 
     const take = limit;
     const skip = (page - 1) * limit;
@@ -56,12 +53,9 @@ export class PrismaUserAccountRepository implements IUserAccountRepository {
   }
 
   async findOne(commonQuery: CommonQuery<UserAccount>): Promise<UserAccount> {
-    const {
-      pagination: { limit, page },
-      filters,
-      orderBy,
-      include,
-    } = commonQuery;
+    const { filters, orderBy, include } = commonQuery;
+
+    const { limit, page } = { ...commonQuery.pagination };
 
     const item: UserAccount = await this.db.userAccount.findFirst({
       where: filters,

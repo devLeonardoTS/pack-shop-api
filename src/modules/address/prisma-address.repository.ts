@@ -60,12 +60,9 @@ export class PrismaAddressRepository implements IAddressRepository {
   }
 
   async findMany(commonQuery: CommonQuery<Address>): Promise<Address[]> {
-    const {
-      pagination: { limit, page },
-      filters,
-      orderBy,
-      include,
-    } = commonQuery;
+    const { filters, orderBy, include } = commonQuery;
+
+    const { limit, page } = { ...commonQuery.pagination };
 
     const take = limit;
     const skip = (page - 1) * limit;
@@ -82,12 +79,9 @@ export class PrismaAddressRepository implements IAddressRepository {
   }
 
   async findOne(commonQuery: CommonQuery<Address>): Promise<Address> {
-    const {
-      pagination: { limit, page },
-      filters,
-      orderBy,
-      include,
-    } = commonQuery;
+    const { filters, orderBy, include } = commonQuery;
+
+    const { limit, page } = { ...commonQuery.pagination };
 
     const item: Address = await this.db.address.findFirst({
       where: filters,

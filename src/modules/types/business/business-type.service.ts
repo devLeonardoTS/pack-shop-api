@@ -45,13 +45,11 @@ export class BusinessTypeService {
     return result;
   }
 
-  async findById(id: number): Promise<BusinessType> {
-    const resource = await this.repository.findById(id);
-
-    if (typeof resource === "undefined") {
+  async findOne(commonQuery: CommonQuery<BusinessType>): Promise<BusinessType> {
+    const resource = await this.repository.findOne(commonQuery);
+    if (!resource) {
       throw new NotFoundException();
     }
-
     return resource;
   }
 

@@ -19,12 +19,9 @@ export class PrismaPhoneTypeRepository implements IPhoneTypeRepository {
   }
 
   async findMany(commonQuery: CommonQuery<PhoneType>): Promise<PhoneType[]> {
-    const {
-      pagination: { limit, page },
-      filters,
-      orderBy,
-      include,
-    } = commonQuery;
+    const { filters, orderBy, include } = commonQuery;
+
+    const { limit, page } = { ...commonQuery.pagination };
 
     const take = limit;
     const skip = (page - 1) * limit;
@@ -40,12 +37,9 @@ export class PrismaPhoneTypeRepository implements IPhoneTypeRepository {
   }
 
   async findOne(commonQuery: CommonQuery<PhoneType>): Promise<PhoneType> {
-    const {
-      pagination: { limit, page },
-      filters,
-      orderBy,
-      include,
-    } = commonQuery;
+    const { filters, orderBy, include } = commonQuery;
+
+    const { limit, page } = { ...commonQuery.pagination };
 
     const item: PhoneType = await this.db.tokenType.findFirst({
       where: filters,

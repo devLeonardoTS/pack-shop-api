@@ -47,12 +47,9 @@ export class PrismaPhoneRepository implements IPhoneRepository {
   }
 
   async findMany(commonQuery: CommonQuery<Phone>): Promise<Phone[]> {
-    const {
-      pagination: { limit, page },
-      filters,
-      orderBy,
-      include,
-    } = commonQuery;
+    const { filters, orderBy, include } = commonQuery;
+
+    const { limit, page } = { ...commonQuery.pagination };
 
     const take = limit;
     const skip = (page - 1) * limit;

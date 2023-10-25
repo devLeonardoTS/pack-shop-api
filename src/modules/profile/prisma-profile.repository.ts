@@ -28,12 +28,9 @@ export class PrismaProfileRepository implements IProfileRepository {
   }
 
   async findMany(commonQuery: CommonQuery<Profile>): Promise<Profile[]> {
-    const {
-      pagination: { limit, page },
-      filters,
-      orderBy,
-      include,
-    } = commonQuery;
+    const { filters, orderBy, include } = commonQuery;
+
+    const { limit, page } = { ...commonQuery.pagination };
 
     const take = limit;
     const skip = (page - 1) * limit;
@@ -54,12 +51,9 @@ export class PrismaProfileRepository implements IProfileRepository {
   }
 
   async findOne(commonQuery: CommonQuery<Profile>): Promise<Profile> {
-    const {
-      pagination: { limit, page },
-      filters,
-      orderBy,
-      include,
-    } = commonQuery;
+    const { filters, orderBy, include } = commonQuery;
+
+    const { limit, page } = { ...commonQuery.pagination };
 
     const item: Profile = await this.db.profile.findFirst({
       where: filters,

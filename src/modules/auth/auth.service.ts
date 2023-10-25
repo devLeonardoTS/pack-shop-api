@@ -14,6 +14,7 @@ export class AuthService {
 
   async validateUser(email: string, password: string) {
     let userAccount: UserAccount;
+
     try {
       userAccount = await this.userAccountService.findOne({
         filters: { email },

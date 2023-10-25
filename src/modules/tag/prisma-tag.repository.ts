@@ -36,12 +36,9 @@ export class PrismaTagRepository implements ITagRepository {
   }
 
   async findMany(commonQuery: CommonQuery<Tag>): Promise<Tag[]> {
-    const {
-      pagination: { limit, page },
-      filters,
-      orderBy,
-      include,
-    } = commonQuery;
+    const { filters, orderBy, include } = commonQuery;
+
+    const { limit, page } = { ...commonQuery.pagination };
 
     const take = limit;
     const skip = (page - 1) * limit;
@@ -57,12 +54,9 @@ export class PrismaTagRepository implements ITagRepository {
   }
 
   async findOne(commonQuery: CommonQuery<Tag>): Promise<Tag> {
-    const {
-      pagination: { limit, page },
-      filters,
-      orderBy,
-      include,
-    } = commonQuery;
+    const { filters, orderBy, include } = commonQuery;
+
+    const { limit, page } = { ...commonQuery.pagination };
 
     const item: Tag = await this.db.tag.findFirst({
       where: filters,

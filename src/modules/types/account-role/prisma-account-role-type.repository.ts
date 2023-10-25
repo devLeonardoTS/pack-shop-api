@@ -25,11 +25,9 @@ export class PrismaAccountRoleTypeRepository
   async findMany(
     commonQuery: CommonQuery<AccountRoleType>,
   ): Promise<AccountRoleType[]> {
-    const {
-      pagination: { limit, page },
-      filters,
-      orderBy,
-    } = commonQuery;
+    const { filters, orderBy } = commonQuery;
+
+    const { limit, page } = { ...commonQuery.pagination };
 
     const take = limit;
     const skip = (page - 1) * limit;
@@ -47,12 +45,9 @@ export class PrismaAccountRoleTypeRepository
   async findOne(
     commonQuery: CommonQuery<AccountRoleType>,
   ): Promise<AccountRoleType> {
-    const {
-      pagination: { limit, page },
-      filters,
-      orderBy,
-      include,
-    } = commonQuery;
+    const { filters, orderBy, include } = commonQuery;
+
+    const { limit, page } = { ...commonQuery.pagination };
 
     const item: AccountRoleType = await this.db.accountRoleType.findFirst({
       where: filters,

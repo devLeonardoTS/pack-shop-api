@@ -54,12 +54,9 @@ export class PrismaImageRepository implements IImageRepository {
   }
 
   async findMany(commonQuery: CommonQuery<Image>): Promise<Image[]> {
-    const {
-      pagination: { limit, page },
-      filters,
-      orderBy,
-      include,
-    } = commonQuery;
+    const { filters, orderBy, include } = commonQuery;
+
+    const { limit, page } = { ...commonQuery.pagination };
 
     const take = limit;
     const skip = (page - 1) * limit;
@@ -76,12 +73,9 @@ export class PrismaImageRepository implements IImageRepository {
   }
 
   async findOne(commonQuery: CommonQuery<Image>): Promise<Image> {
-    const {
-      pagination: { limit, page },
-      filters,
-      orderBy,
-      include,
-    } = commonQuery;
+    const { filters, orderBy, include } = commonQuery;
+
+    const { limit, page } = { ...commonQuery.pagination };
 
     const item: Image = await this.db.image.findFirst({
       where: filters,

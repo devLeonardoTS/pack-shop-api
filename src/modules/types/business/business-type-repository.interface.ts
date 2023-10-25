@@ -6,7 +6,7 @@ import { UpdateBusinessTypeRequest } from "./dtos/update-business-type.request";
 export interface IBusinessTypeRepository {
   create(createRequest: CreateBusinessTypeRequest): Promise<BusinessType>;
   findMany(commonQuery: CommonQuery<BusinessType>): Promise<BusinessType[]>;
-  findById(id: number): Promise<BusinessType>;
+  findOne(commonQuery: CommonQuery<BusinessType>): Promise<BusinessType>;
   update(
     id: number,
     updateReq: UpdateBusinessTypeRequest,
