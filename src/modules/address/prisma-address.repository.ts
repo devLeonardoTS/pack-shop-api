@@ -30,7 +30,7 @@ export class PrismaAddressRepository implements IAddressRepository {
       filters: { profileId, isPrimary: true },
     });
 
-    if (primaryAddress) {
+    if (primaryAddress && isPrimary) {
       const updateRequest = { ...createRequest, isPrimary: false };
       await this.update(primaryAddress.id, updateRequest);
     }

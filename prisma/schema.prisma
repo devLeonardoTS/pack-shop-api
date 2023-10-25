@@ -150,6 +150,8 @@ model Phone {
 
   number String @db.VarChar(15)
 
+  isPrimary Boolean @default(false)
+
   phoneTypeId Int
   phoneType PhoneType @relation(fields: [phoneTypeId], references: [id])
 
