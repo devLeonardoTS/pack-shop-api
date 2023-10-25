@@ -27,10 +27,9 @@ export class TagService {
   async findMany(
     commonQuery: CommonQuery<Tag>,
   ): Promise<PaginationResponse<Tag>> {
-    const {
-      pagination: { limit, page },
-      filters,
-    } = commonQuery;
+    const { filters } = commonQuery;
+
+    const { limit, page } = commonQuery.pagination;
 
     const total = await this.repository.countAll(filters);
     const pages = Math.ceil(total / limit);

@@ -21,10 +21,9 @@ export class ProductTypeService {
   async findMany(
     commonQuery: CommonQuery<ProductType>,
   ): Promise<PaginationResponse<ProductType>> {
-    const {
-      pagination: { limit, page },
-      filters,
-    } = commonQuery;
+    const { filters } = commonQuery;
+
+    const { limit, page } = commonQuery.pagination;
 
     const total = await this.repository.countAll(filters);
     const pages = Math.ceil(total / limit);

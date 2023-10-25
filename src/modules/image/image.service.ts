@@ -22,10 +22,9 @@ export class ImageService {
   async findMany(
     commonQuery: CommonQuery<Image>,
   ): Promise<PaginationResponse<Image>> {
-    const {
-      pagination: { limit, page },
-      filters,
-    } = commonQuery;
+    const { filters } = commonQuery;
+
+    const { limit, page } = commonQuery.pagination;
 
     const total = await this.repository.countAll(filters);
     const pages = Math.ceil(total / limit);
