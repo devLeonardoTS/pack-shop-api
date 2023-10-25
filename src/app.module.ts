@@ -1,13 +1,7 @@
-import {
-  MiddlewareConsumer,
-  Module,
-  NestModule,
-  RequestMethod,
-} from "@nestjs/common";
+import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config/dist";
 import { GlobalServicesModule } from "./global-services.module";
 import { AuthModule } from "./modules/auth/auth.module";
-import { QueryParserMiddleware } from "./modules/common/middlewares/query-parser.middleware";
 import { HealthCheckModule } from "./modules/health-check/health-check.module";
 import { ImageModule } from "./modules/image/image.module";
 import { LeadsModule } from "./modules/leads/leads.module";
@@ -40,10 +34,4 @@ import { UserAccountModule } from "./modules/user-account/user-account.module";
     ProductModule,
   ],
 })
-export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(QueryParserMiddleware)
-      .forRoutes({ path: "*", method: RequestMethod.GET });
-  }
-}
+export class AppModule {}

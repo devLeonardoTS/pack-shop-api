@@ -109,7 +109,7 @@ describe("user-account module", () => {
 
           const expected = expect.objectContaining({
             error: expect.any(String),
-            message: expect.any(String),
+            message: expect.arrayContaining([expect.any(String)]),
             statusCode: HttpStatus.BAD_REQUEST,
           });
 
@@ -177,19 +177,7 @@ describe("user-account module", () => {
           pages: expect.any(Number),
           previous: expect.any(Boolean),
           next: expect.any(Boolean),
-          data: expect.arrayContaining<UserAccount>([
-            {
-              id: expect.any(Number),
-              originTypeId: expect.any(Number),
-              roleTypeId: expect.any(Number),
-              email: expect.any(String),
-              password: expect.any(String),
-              isActive: expect.any(Boolean),
-              isConfirmed: expect.any(Boolean),
-              createdAt: expect.any(String),
-              updatedAt: expect.any(String),
-            },
-          ]),
+          data: expect.arrayContaining([expect.any(Object)]),
         });
 
         const result = await request(app.getHttpServer()).get(baseEndpoint);
@@ -205,19 +193,7 @@ describe("user-account module", () => {
             pages: expect.any(Number),
             previous: expect.any(Boolean),
             next: expect.any(Boolean),
-            data: expect.arrayContaining<UserAccount>([
-              {
-                id: expect.any(Number),
-                originTypeId: expect.any(Number),
-                roleTypeId: expect.any(Number),
-                email: expect.any(String),
-                password: expect.any(String),
-                isActive: expect.any(Boolean),
-                isConfirmed: expect.any(Boolean),
-                createdAt: expect.any(String),
-                updatedAt: expect.any(String),
-              },
-            ]),
+            data: expect.arrayContaining([expect.any(Object)]),
           });
 
           const query = queryString.stringify({

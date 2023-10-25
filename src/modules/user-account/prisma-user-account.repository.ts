@@ -97,7 +97,7 @@ export class PrismaUserAccountRepository implements IUserAccountRepository {
         password: newPassword,
         isActive,
         isConfirmed,
-        roleType: { connect: { role: roleType } },
+        roleType: roleType && { connect: { role: roleType } },
       },
       include: {
         originType: true,

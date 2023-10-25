@@ -13,14 +13,10 @@ import { JwtAuthGuard } from "@src/modules/auth/jwt-auth.guard";
 import { CommonQuery } from "@src/modules/common/dtos/common.query";
 import { BusinessOwnerService } from "../business-owner/business-owner.service";
 import { CreateBusinessOwnerRequest } from "../business-owner/dto/create-business-owner.request";
-import { BusinessService } from "../business-profile.service";
 
-@Controller("business/:businessId/product")
+@Controller("business/:businessId/owner")
 export class BusinessOwnerController {
-  constructor(
-    private readonly businessOwnerService: BusinessOwnerService,
-    private readonly businessService: BusinessService,
-  ) {}
+  constructor(private readonly businessOwnerService: BusinessOwnerService) {}
 
   @UseGuards(JwtAuthGuard)
   @Post()
