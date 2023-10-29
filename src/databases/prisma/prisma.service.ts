@@ -7,6 +7,7 @@ import {
 import { ConfigService } from "@nestjs/config/dist";
 import { Prisma, PrismaClient } from "@prisma/client";
 import { BaseConfigsSeeder } from "prisma/seeders/base-configs-seeder";
+import { LeadSeeder } from "prisma/seeders/lead-seeder";
 import { SeedFactory } from "prisma/utils/seed-factory";
 
 @Injectable()
@@ -32,7 +33,7 @@ export default class PrismaService
     await this.$connect();
 
     // Runs all the data seeding necessary to run the system on a new database;
-    await SeedFactory(this, [BaseConfigsSeeder]);
+    await SeedFactory(this, [LeadSeeder, BaseConfigsSeeder]);
     // ----
   }
 
