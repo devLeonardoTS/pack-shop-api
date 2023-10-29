@@ -1,0 +1,4 @@
+export enum EPhoneType {
+  CELLPHONE = "CELLPHONE",
+  RESIDENTIAL = "RESIDENTIAL",
+}

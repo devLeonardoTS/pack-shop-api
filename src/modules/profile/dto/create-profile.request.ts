@@ -1,14 +1,17 @@
 import { Type } from "class-transformer";
-import { IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
+import {
+  IsBoolean,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from "class-validator";
 
 export class CreateProfileRequest {
   @IsNotEmpty()
-  @IsString()
-  nickname: string;
-
-  @IsNotEmpty()
-  @IsString()
-  description: string;
+  @Type(() => Boolean)
+  @IsBoolean()
+  isSubscribedToOffers: boolean;
 
   @IsOptional()
   @IsString()

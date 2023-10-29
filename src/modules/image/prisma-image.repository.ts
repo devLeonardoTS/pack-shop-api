@@ -1,11 +1,12 @@
 import { Injectable } from "@nestjs/common";
 import { Image } from "@prisma/client";
 import PrismaService from "@src/databases/prisma/prisma.service";
+import { CommonQuery } from "../common/dtos/common.query";
 import { DatabaseException } from "../common/exceptions/database.exception";
 import { CloudinaryService } from "../upload/cloudinary/cloudinary.service";
-import { CreateImageRequest } from "./create-image.request";
+import { CreateImageRequest } from "./dtos/create-image.request";
+import { UpdateImageRequest } from "./dtos/update-image.request";
 import { IImageRepository } from "./image-repository.interface";
-import { UpdateImageRequest } from "./update-image.request";
 
 @Injectable()
 export class PrismaImageRepository implements IImageRepository {
@@ -52,18 +53,33 @@ export class PrismaImageRepository implements IImageRepository {
     return created;
   }
 
-  async findById(id: number): Promise<Image> {
-    const item: Image = await this.db.image.findFirst({
-      where: { id },
-      include: { imageType: true },
+  async findMany(commonQuery: CommonQuery<Image>): Promise<Image[]> {
+    const { filters, orderBy, include } = commonQuery;
+
+    const { limit, page } = { ...commonQuery.pagination };
+
+    const take = limit;
+    const skip = (page - 1) * limit;
+
+    const list: Image[] = await this.db.image.findMany({
+      take,
+      skip,
+      where: filters,
+      orderBy,
+      include,
     });
-    return item;
+
+    return list;
   }
 
-  async findByPublicId(publicId: string): Promise<Image> {
+  async findOne(commonQuery: CommonQuery<Image>): Promise<Image> {
+    const { filters, orderBy, include } = commonQuery;
+
+    const { limit, page } = { ...commonQuery.pagination };
+
     const item: Image = await this.db.image.findFirst({
-      where: { publicId },
-      include: { imageType: true },
+      where: filters,
+      include,
     });
     return item;
   }
@@ -153,7 +169,7 @@ export class PrismaImageRepository implements IImageRepository {
     return removed;
   }
 
-  async countAll(): Promise<number> {
-    return await this.db.image.count();
+  async countAll(filters: Partial<Image>): Promise<number> {
+    return await this.db.image.count({ where: filters });
   }
 }

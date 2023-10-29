@@ -13,10 +13,6 @@ const prisma = new PrismaClient({
 });
 
 async function main() {
-  if (process.env.SEED_DB === "false") {
-    return;
-  }
-
   console.log("\n🌱 [Prisma Seed Service]: Started.");
 
   const seeders: SeederFn[] = [LeadSeeder, BaseConfigsSeeder];

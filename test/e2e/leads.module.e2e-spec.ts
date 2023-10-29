@@ -9,7 +9,7 @@ import { UpdateLeadRequest } from "@src/modules/leads/dtos/update-lead.request";
 import { LeadsModule } from "@src/modules/leads/leads.module";
 import { LeadSeeder } from "prisma/seeders/lead-seeder";
 import { SeedFactory } from "prisma/utils/seed-factory";
-import queryString from "query-string";
+import * as queryString from "query-string";
 import * as request from "supertest";
 
 describe("leads module", () => {
@@ -138,7 +138,7 @@ describe("leads module", () => {
           ]),
         });
 
-        const query = queryString.stringify({
+        const query = queryString.default.stringify({
           page: 1,
           limit: 3,
         });

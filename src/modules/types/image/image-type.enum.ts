@@ -1,0 +1,4 @@
+export enum EBusinessType {
+  PROFILE_AVATAR = "PROFILE:AVATAR",
+  PROFILE_BANNER = "PROFILE:BANNER",
+}

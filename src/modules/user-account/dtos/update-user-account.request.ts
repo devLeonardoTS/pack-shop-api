@@ -1,5 +1,6 @@
-import { EAccountRoleType } from "@src/modules/account-role-type/enums/account-role-type.enum";
-import { IsEnum, IsNotEmpty, IsOptional } from "class-validator";
+import { EAccountRoleType } from "@src/modules/types/account-role/account-role-type.enum";
+import { Type } from "class-transformer";
+import { IsBoolean, IsEnum, IsNotEmpty, IsOptional } from "class-validator";
 
 export class UpdateUserAccountRequest {
   @IsOptional()
@@ -17,4 +18,16 @@ export class UpdateUserAccountRequest {
   @IsOptional()
   @IsEnum(EAccountRoleType)
   roleType?: EAccountRoleType;
+
+  @IsOptional()
+  @IsNotEmpty()
+  @Type(() => Boolean)
+  @IsBoolean()
+  isActive?: boolean;
+
+  @IsOptional()
+  @IsNotEmpty()
+  @Type(() => Boolean)
+  @IsBoolean()
+  isConfirmed?: boolean;
 }

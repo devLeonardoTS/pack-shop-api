@@ -3,6 +3,7 @@ import {
   ValidationPipe,
   VersioningType,
 } from "@nestjs/common";
+import { QueryParserMiddleware } from "./modules/common/middlewares/query-parser.middleware";
 
 export async function AppHttpSetup(app: INestApplication) {
   // Allow CORS
@@ -14,4 +15,5 @@ export async function AppHttpSetup(app: INestApplication) {
     type: VersioningType.URI,
     defaultVersion: "1",
   });
+  app.use(new QueryParserMiddleware().use);
 }

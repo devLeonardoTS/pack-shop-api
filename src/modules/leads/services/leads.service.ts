@@ -1,5 +1,5 @@
 import { Inject, Injectable, NotFoundException } from "@nestjs/common";
-import { PaginationQuery } from "@src/modules/common/dtos/pagination.query";
+import { CommonQuery } from "@src/modules/common/dtos/common.query";
 import { PaginationResponse } from "@src/modules/common/dtos/pagination.response";
 import { CreateLeadRequest } from "../dtos/create-lead.request";
 import { UpdateLeadRequest } from "../dtos/update-lead.request";
@@ -18,15 +18,17 @@ export class LeadsService {
   }
 
   async findMany(
-    paginatedRequest: PaginationQuery,
+    commonQuery: CommonQuery<Lead>,
   ): Promise<PaginationResponse<Lead>> {
-    const { page, limit } = paginatedRequest;
+    const { filters } = commonQuery;
 
-    const total = await this.repository.countAll();
+    const { limit, page } = commonQuery.pagination;
+
+    const total = await this.repository.countAll(filters);
     const pages = Math.ceil(total / limit);
     const previous = page > 1 && page <= pages;
     const next = pages > 1 && page < pages;
-    const data = await this.repository.findMany(paginatedRequest);
+    const data = await this.repository.findMany(commonQuery);
 
     const result: PaginationResponse<Lead> = {
       total,

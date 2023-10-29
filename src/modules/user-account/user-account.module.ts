@@ -1,34 +1,44 @@
 import { Module } from "@nestjs/common";
-import { IAccountOriginTypeRepository } from "../account-origin-type/interfaces/account-origin-type-repository.interface";
-import { PrismaAccountOriginTypeRepository } from "../account-origin-type/repositories/prisma-account-origin-type.repository";
-import { AccountOriginTypeService } from "../account-origin-type/services/account-origin-type.service";
-import { IAccountRoleTypeRepository } from "../account-role-type/interfaces/account-role-type-repository.interface";
-import { PrismaAccountRoleTypeRepository } from "../account-role-type/repositories/prisma-account-role-type.repository";
-import { AccountRoleTypeService } from "../account-role-type/services/account-role-type.service";
+import { ProfileModule } from "../profile/profile.module";
+import { IAccountOriginTypeRepository } from "../types/account-origin/account-origin-type-repository.interface";
+import { AccountOriginTypeService } from "../types/account-origin/account-origin-type.service";
+import { PrismaAccountOriginTypeRepository } from "../types/account-origin/prisma-account-origin-type.repository";
+import { IAccountRoleTypeRepository } from "../types/account-role/account-role-type-repository.interface";
+import { AccountRoleTypeService } from "../types/account-role/account-role-type.service";
+import { PrismaAccountRoleTypeRepository } from "../types/account-role/prisma-account-role-type.repository";
+import { UserAccountOriginTypeController } from "./controllers/ua-origin.controller";
+import { UserAccountProfileController } from "./controllers/ua-profile.controller";
+import { UserAccountRoleTypeController } from "./controllers/ua-role.controller";
 import { UserAccountController } from "./controllers/user-account.controller";
-import { IUserAccountRepository } from "./interfaces/user-account-repository.interface";
-import { PrismaUserAccountRepository } from "./repositories/prisma-user-account.repository";
-import { UserAccountService } from "./services/user-account.service";
+import { PrismaUserAccountRepository } from "./prisma-user-account.repository";
+import { IUserAccountRepository } from "./user-account-repository.interface";
+import { UserAccountService } from "./user-account.service";
 
 @Module({
-  controllers: [UserAccountController],
+  controllers: [
+    UserAccountController,
+    UserAccountProfileController,
+    UserAccountOriginTypeController,
+    UserAccountRoleTypeController,
+  ],
   providers: [
     UserAccountService,
+    AccountRoleTypeService,
+    AccountOriginTypeService,
     {
       provide: IUserAccountRepository,
       useClass: PrismaUserAccountRepository,
     },
-    AccountRoleTypeService,
-    {
-      provide: IAccountOriginTypeRepository,
-      useClass: PrismaAccountOriginTypeRepository,
-    },
-    AccountOriginTypeService,
     {
       provide: IAccountRoleTypeRepository,
       useClass: PrismaAccountRoleTypeRepository,
     },
+    {
+      provide: IAccountOriginTypeRepository,
+      useClass: PrismaAccountOriginTypeRepository,
+    },
   ],
   exports: [UserAccountService],
+  imports: [ProfileModule],
 })
 export class UserAccountModule {}
