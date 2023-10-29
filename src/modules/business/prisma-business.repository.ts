@@ -36,7 +36,7 @@ export class PrismaBusinessRepository implements IBusinessRepository {
         inscricaoMunicipal,
         inscricaoEstadual,
         dataAbertura,
-        profile: {
+        profile: profileId && {
           connect: {
             id: profileId,
           },
@@ -112,7 +112,7 @@ export class PrismaBusinessRepository implements IBusinessRepository {
         inscricaoMunicipal,
         inscricaoEstadual,
         dataAbertura,
-        businessType: { connect: { type: businessType } },
+        businessType: businessType && { connect: { type: businessType } },
       },
       include: {
         businessType: true,

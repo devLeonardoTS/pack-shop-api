@@ -28,7 +28,7 @@ export class PrismaImageRepository implements IImageRepository {
           width: uploadedImage.width,
           imageUrl: uploadedImage.url,
           createdAt: uploadedImage.created_at,
-          imageType: {
+          imageType: imageType && {
             connectOrCreate: {
               where: {
                 type: imageType,
@@ -103,18 +103,16 @@ export class PrismaImageRepository implements IImageRepository {
             width: uploadedImage.width,
             imageUrl: uploadedImage.url,
             createdAt: uploadedImage.created_at,
-            imageType: imageType
-              ? {
-                  connectOrCreate: {
-                    where: {
-                      type: imageType,
-                    },
-                    create: {
-                      type: imageType,
-                    },
-                  },
-                }
-              : undefined,
+            imageType: imageType && {
+              connectOrCreate: {
+                where: {
+                  type: imageType,
+                },
+                create: {
+                  type: imageType,
+                },
+              },
+            },
           },
           include: { imageType: true },
         })
@@ -137,18 +135,16 @@ export class PrismaImageRepository implements IImageRepository {
         id,
       },
       data: {
-        imageType: imageType
-          ? {
-              connectOrCreate: {
-                where: {
-                  type: imageType,
-                },
-                create: {
-                  type: imageType,
-                },
-              },
-            }
-          : undefined,
+        imageType: imageType && {
+          connectOrCreate: {
+            where: {
+              type: imageType,
+            },
+            create: {
+              type: imageType,
+            },
+          },
+        },
       },
       include: { imageType: true },
     });

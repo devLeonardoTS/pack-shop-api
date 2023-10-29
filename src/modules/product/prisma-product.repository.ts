@@ -59,18 +59,18 @@ export class PrismaProductRepository implements IProductRepository {
         weightKg,
         widthCm,
         isAvailable,
-        productCategories: {
+        productCategories: productCategories && {
           create: categoriesConnectOrCreate as any,
         },
-        productTags: {
+        productTags: productTags && {
           create: tagsConnectOrCreate as any,
         },
-        productType: {
+        productType: productType && {
           connect: {
             type: productType,
           },
         },
-        business: {
+        business: businessId && {
           connect: {
             id: businessId,
           },
@@ -177,18 +177,18 @@ export class PrismaProductRepository implements IProductRepository {
         weightKg,
         widthCm,
         isAvailable,
-        productCategories: {
+        productCategories: productCategories && {
           create: categoriesConnectOrCreate as any,
         },
-        productTags: {
+        productTags: productTags && {
           create: tagsConnectOrCreate as any,
         },
-        productType: {
+        productType: productType && {
           connect: {
             type: productType,
           },
         },
-        business: {
+        business: businessId && {
           connect: {
             id: businessId,
           },

@@ -25,7 +25,7 @@ export class PrismaConsumerRepository implements IConsumerRepository {
         fullName,
         birthDate,
         socialName,
-        profile: {
+        profile: profileId && {
           connect: {
             id: profileId,
           },

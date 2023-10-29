@@ -19,7 +19,7 @@ export class PrismaBusinessOwnerRepository implements IBusinessOwnerRepository {
       data: {
         cpf,
         fullName,
-        business: {
+        business: businessId && {
           connect: {
             id: businessId,
           },
@@ -85,7 +85,7 @@ export class PrismaBusinessOwnerRepository implements IBusinessOwnerRepository {
       data: {
         cpf,
         fullName,
-        business: {
+        business: businessId && {
           connect: {
             id: businessId,
           },

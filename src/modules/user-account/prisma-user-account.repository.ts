@@ -17,8 +17,8 @@ export class PrismaUserAccountRepository implements IUserAccountRepository {
       data: {
         email,
         password,
-        roleType: { connect: { role: roleType } },
-        originType: { connect: { origin: originType } },
+        roleType: roleType && { connect: { role: roleType } },
+        originType: originType && { connect: { origin: originType } },
       },
       include: { originType: true, roleType: true },
     });

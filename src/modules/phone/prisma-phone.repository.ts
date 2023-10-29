@@ -26,12 +26,12 @@ export class PrismaPhoneRepository implements IPhoneRepository {
       data: {
         number,
         isPrimary,
-        phoneType: {
+        phoneType: phoneType && {
           connect: {
             type: phoneType,
           },
         },
-        profile: {
+        profile: profileId && {
           connect: {
             id: profileId,
           },
@@ -95,7 +95,7 @@ export class PrismaPhoneRepository implements IPhoneRepository {
       },
       data: {
         number,
-        phoneType: { connect: { type: phoneType } },
+        phoneType: phoneType && { connect: { type: phoneType } },
         isPrimary,
       },
       include: {
