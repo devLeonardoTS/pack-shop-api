@@ -22,9 +22,7 @@ export class ProfileBusinessController {
     @Param("profileId", ParseIntPipe) profileId: number,
     @Body() createRequest: CreateBusinessRequest,
   ): Promise<Business> {
-    if (!createRequest.profileId) {
-      createRequest.profileId = profileId;
-    }
+    createRequest.profileId = profileId;
     return await this.businessService.create(createRequest);
   }
 

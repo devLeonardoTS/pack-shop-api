@@ -44,9 +44,7 @@ export class ProductImageController {
     @Param("productId", ParseIntPipe) productId: number,
     @Query() query: CommonQuery<ProductImage>,
   ): Promise<PaginationResponse<ProductImage>> {
-    if (!query.filters.productId) {
-      query.filters.productId = productId;
-    }
+    query.filters.productId = productId;
     const result = await this.productImageService.findMany(query);
     return result;
   }
@@ -56,9 +54,7 @@ export class ProductImageController {
     @Param("id", ParseIntPipe) id: number,
     @Query() query: CommonQuery<ProductImage>,
   ): Promise<ProductImage> {
-    if (!query.filters.id) {
-      query.filters.id = id;
-    }
+    query.filters.id = id;
     return this.productImageService.findOne(query);
   }
 

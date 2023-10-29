@@ -22,9 +22,7 @@ export class UserAccountProfileController {
     @Param("uaId", ParseIntPipe) uaId: number,
     @Body() createRequest: CreateProfileRequest,
   ): Promise<Profile> {
-    if (!createRequest.userAccountId) {
-      createRequest.userAccountId = uaId;
-    }
+    createRequest.userAccountId = uaId;
     return await this.profileService.create(createRequest);
   }
 

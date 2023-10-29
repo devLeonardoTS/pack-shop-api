@@ -22,9 +22,7 @@ export class ProfileConsumerController {
     @Param("profileId", ParseIntPipe) profileId: number,
     @Body() createRequest: CreateConsumerRequest,
   ): Promise<Consumer> {
-    if (!createRequest.profileId) {
-      createRequest.profileId = profileId;
-    }
+    createRequest.profileId = profileId;
     return await this.consumerService.create(createRequest);
   }
 

@@ -3,10 +3,12 @@ import { AddressModule } from "../address/address.module";
 import { BusinessModule } from "../business/business.module";
 import { ConsumerModule } from "../consumer/consumer.module";
 import { ImageModule } from "../image/image.module";
+import { PhoneModule } from "../phone/phone.module";
 import { UploadModule } from "../upload/upload.module";
 import { ProfileAddressController } from "./controllers/profile-address.controller";
 import { ProfileBusinessController } from "./controllers/profile-business.controller";
 import { ProfileConsumerController } from "./controllers/profile-consumer.controller";
+import { ProfilePhoneController } from "./controllers/profile-phone.controller";
 import { ProfileController } from "./controllers/profile.controller";
 import { PrismaProfileImageRepository } from "./image/prisma-profile-image.repository";
 import { ProfileImageController } from "./image/profile-image.controller";
@@ -23,6 +25,7 @@ import { ProfileService } from "./profile.service";
     ProfileBusinessController,
     ProfileConsumerController,
     ProfileAddressController,
+    ProfilePhoneController,
   ],
   providers: [
     ProfileService,
@@ -39,6 +42,8 @@ import { ProfileService } from "./profile.service";
     BusinessModule,
     ConsumerModule,
     AddressModule,
+    PhoneModule,
   ],
+  exports: [ProfileService, ProfileImageService],
 })
 export class ProfileModule {}

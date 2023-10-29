@@ -49,8 +49,12 @@ export class ProfileController {
   }
 
   @Get(":id")
-  async findById(@Param("id", ParseIntPipe) id: number): Promise<Profile> {
-    return this.profileService.findOne({ filters: { id } });
+  async findById(
+    @Param("id", ParseIntPipe) id: number,
+    @Query() query: CommonQuery<Profile>,
+  ): Promise<Profile> {
+    query.filters.id = id;
+    return this.profileService.findOne(query);
   }
 
   @Put(":id")

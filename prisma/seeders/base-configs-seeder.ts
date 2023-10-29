@@ -3,6 +3,7 @@ import { createAccountOriginTypes } from "./objects/AccountOriginTypes";
 import { createAccountRoleTypes } from "./objects/AccountRoleTypes";
 import { createBusinessTypes } from "./objects/BusinessTypes";
 import { createPhoneTypes } from "./objects/PhoneTypes";
+import { createProductTypes } from "./objects/ProductTypes";
 import { createTokenTypes } from "./objects/TokenTypes";
 import { createUserAccounts } from "./objects/UserAccounts";
 
@@ -68,6 +69,21 @@ async function seedTokenTypes(prismaClient: PrismaClient) {
   await prismaClient.tokenType.createMany({ data: objects });
 }
 
+async function seedProductTypes(prismaClient: PrismaClient) {
+  const hasBeenSeeded: boolean = (await prismaClient.productType.count()) > 0;
+
+  if (hasBeenSeeded) {
+    // console.log("🌱 [ProductTypes]: Already Seeded.");
+    return;
+  }
+
+  // console.log("🌱 [ProductTypes]: Seeding...");
+
+  const objects = createProductTypes();
+
+  await prismaClient.productType.createMany({ data: objects });
+}
+
 async function seedBusinessTypes(prismaClient: PrismaClient) {
   const hasBeenSeeded: boolean = (await prismaClient.businessType.count()) > 0;
 
@@ -103,6 +119,7 @@ export async function BaseConfigsSeeder(prismaClient: PrismaClient) {
   await seedAccountRoleTypes(prismaClient);
   await seedUserAccounts(prismaClient);
   await seedTokenTypes(prismaClient);
+  await seedProductTypes(prismaClient);
   await seedBusinessTypes(prismaClient);
   await seedPhoneTypes(prismaClient);
 }

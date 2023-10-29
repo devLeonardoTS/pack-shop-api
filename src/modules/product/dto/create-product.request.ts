@@ -1,9 +1,11 @@
+import { EProductType } from "@src/modules/types/product/product-type.enum";
 import { Transform, Type } from "class-transformer";
 import {
   IsArray,
   IsBoolean,
   IsDateString,
   IsDecimal,
+  IsEnum,
   IsNotEmpty,
   IsNumber,
   IsOptional,
@@ -75,7 +77,7 @@ export class CreateProductRequest {
   isAvailable?: boolean;
 
   @IsNotEmpty()
-  @IsString()
+  @IsEnum(EProductType)
   productType: string;
 
   @IsNotEmpty()

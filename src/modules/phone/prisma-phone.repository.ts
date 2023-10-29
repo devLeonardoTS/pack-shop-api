@@ -66,12 +66,9 @@ export class PrismaPhoneRepository implements IPhoneRepository {
   }
 
   async findOne(commonQuery: CommonQuery<Phone>): Promise<Phone> {
-    const {
-      pagination: { limit, page },
-      filters,
-      orderBy,
-      include,
-    } = commonQuery;
+    const { filters, orderBy, include } = commonQuery;
+
+    const { limit, page } = { ...commonQuery.pagination };
 
     const item: Phone = await this.db.phone.findFirst({
       where: filters,

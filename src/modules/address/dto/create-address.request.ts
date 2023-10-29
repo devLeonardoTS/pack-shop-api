@@ -27,11 +27,6 @@ export class CreateAddressRequest {
   @IsNotEmpty()
   @IsString()
   @MaxLength(255)
-  complemento: string;
-
-  @IsNotEmpty()
-  @IsString()
-  @MaxLength(255)
   numero: string;
 
   @IsNotEmpty()
@@ -54,6 +49,11 @@ export class CreateAddressRequest {
   @Type(() => Boolean)
   @IsBoolean()
   isPrimary?: boolean;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(255)
+  complemento: string;
 
   @IsOptional()
   @IsString()

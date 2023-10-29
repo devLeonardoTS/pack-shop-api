@@ -8,12 +8,17 @@ import { BusinessOwnerService } from "./business-owner/business-owner.service";
 import { PrismaBusinessOwnerRepository } from "./business-owner/prisma-business-owner.repository";
 import { BusinessService } from "./business-profile.service";
 import { IBusinessRepository } from "./business-repository.interface";
+import { BusinessOwnerController } from "./controllers/business-owner.controller";
 import { BusinessProductController } from "./controllers/business-product.controller";
 import { BusinessController } from "./controllers/business.controller";
 import { PrismaBusinessRepository } from "./prisma-business.repository";
 
 @Module({
-  controllers: [BusinessController, BusinessProductController],
+  controllers: [
+    BusinessController,
+    BusinessProductController,
+    BusinessOwnerController,
+  ],
   providers: [
     ProfileService,
     BusinessService,
