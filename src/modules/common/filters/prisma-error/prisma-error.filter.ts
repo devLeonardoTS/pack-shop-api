@@ -12,7 +12,7 @@ import { Response } from "express";
 import { DatabaseException } from "../../exceptions/database.exception";
 
 @Catch(Prisma.PrismaClientValidationError)
-export class PrismaClientErrorFilter implements ExceptionFilter {
+export class PrismaClientValidationErrorFilter implements ExceptionFilter {
   catch(exception: Prisma.PrismaClientKnownRequestError, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
@@ -40,7 +40,13 @@ export class PrismaClientErrorFilter implements ExceptionFilter {
           );
           return response.status(error.getStatus()).json(error.getResponse());
         }
-        console.error(exception);
+
+        const isInProductionMode = process.env.NODE_ENV === "production";
+
+        if (!isInProductionMode) {
+          console.error(exception);
+        }
+
         error = new DatabaseException();
         const errorResponse = error.getResponse();
         return response
@@ -55,7 +61,7 @@ export class PrismaClientErrorFilter implements ExceptionFilter {
 }
 
 @Catch(Prisma.PrismaClientKnownRequestError)
-export class PrismaErrorFilter implements ExceptionFilter {
+export class PrismaClientKnownErrorFilter implements ExceptionFilter {
   catch(exception: Prisma.PrismaClientKnownRequestError, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
@@ -71,8 +77,43 @@ export class PrismaErrorFilter implements ExceptionFilter {
         error = new NotFoundException();
         return response.status(error.getStatus()).json(error.getResponse());
       default:
-        console.error(exception);
+        const isInProductionMode = process.env.NODE_ENV === "production";
+
+        if (!isInProductionMode) {
+          console.error(exception);
+        }
+
         error = new DatabaseException();
+        const errorResponse = error.getResponse();
+        return response
+          .status(error.getStatus())
+          .json(
+            typeof errorResponse === "object"
+              ? { ...errorResponse, errorCode: prismaErrorCode }
+              : error.getResponse(),
+          );
+    }
+  }
+}
+
+@Catch(Prisma.PrismaClientUnknownRequestError)
+export class PrismaClientUnknownRequestErrorFilter implements ExceptionFilter {
+  catch(exception: Prisma.PrismaClientKnownRequestError, host: ArgumentsHost) {
+    const ctx = host.switchToHttp();
+    const response = ctx.getResponse<Response>();
+    const prismaErrorCode = exception.code;
+
+    let error: HttpException;
+
+    switch (prismaErrorCode) {
+      default:
+        const isInProductionMode = process.env.NODE_ENV === "production";
+
+        if (!isInProductionMode) {
+          console.error(exception);
+        }
+
+        error = new BadRequestException();
         const errorResponse = error.getResponse();
         return response
           .status(error.getStatus())
