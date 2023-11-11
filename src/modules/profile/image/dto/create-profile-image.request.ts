@@ -3,9 +3,8 @@ import { IsNumber, IsOptional, IsString } from "class-validator";
 
 export class CreateProfileImageRequest {
   @IsOptional()
-  @Type(() => Number)
-  @IsNumber()
-  profileId?: number;
+  @IsString()
+  imageType?: string;
 
   @IsOptional()
   file?: Express.Multer.File;
@@ -13,9 +12,10 @@ export class CreateProfileImageRequest {
   @IsOptional()
   @Type(() => Number)
   @IsNumber()
-  imageId?: number;
+  profileId?: number;
 
   @IsOptional()
-  @IsString()
-  imageType?: string;
+  @Type(() => Number)
+  @IsNumber()
+  imageId?: number;
 }

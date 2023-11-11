@@ -3,11 +3,11 @@ import { IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
 
 export class CreateProductImageRequest {
   @IsNotEmpty()
-  file: Express.Multer.File;
-
-  @IsNotEmpty()
   @IsString()
   imageType: string;
+
+  @IsOptional()
+  file?: Express.Multer.File;
 
   @IsOptional()
   @Type(() => Number)

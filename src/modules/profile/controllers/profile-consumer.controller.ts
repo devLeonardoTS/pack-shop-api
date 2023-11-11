@@ -5,10 +5,8 @@ import {
   Param,
   ParseIntPipe,
   Post,
-  UseGuards,
 } from "@nestjs/common";
 import { Consumer } from "@prisma/client";
-import { JwtAuthGuard } from "@src/modules/auth/jwt-auth.guard";
 import { ConsumerService } from "@src/modules/consumer/consumer-profile.service";
 import { CreateConsumerRequest } from "@src/modules/consumer/dto/create-consumer.request";
 
@@ -16,7 +14,6 @@ import { CreateConsumerRequest } from "@src/modules/consumer/dto/create-consumer
 export class ProfileConsumerController {
   constructor(private readonly consumerService: ConsumerService) {}
 
-  @UseGuards(JwtAuthGuard)
   @Post()
   async create(
     @Param("profileId", ParseIntPipe) profileId: number,

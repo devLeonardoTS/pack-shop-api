@@ -4,7 +4,6 @@ import {
   IsArray,
   IsBoolean,
   IsDateString,
-  IsDecimal,
   IsEnum,
   IsNotEmpty,
   IsNumber,
@@ -35,7 +34,7 @@ export class CreateProductRequest {
 
   @IsNotEmpty()
   @Type(() => Number)
-  @IsDecimal()
+  @IsNumber()
   price: number;
 
   @IsNotEmpty()
@@ -45,22 +44,22 @@ export class CreateProductRequest {
 
   @IsNotEmpty()
   @Type(() => Number)
-  @IsDecimal()
+  @IsNumber()
   weightKg: number;
 
   @IsNotEmpty()
   @Type(() => Number)
-  @IsDecimal()
+  @IsNumber()
   lengthCm: number;
 
   @IsNotEmpty()
   @Type(() => Number)
-  @IsDecimal()
+  @IsNumber()
   heightCm: number;
 
   @IsNotEmpty()
   @Type(() => Number)
-  @IsDecimal()
+  @IsNumber()
   widthCm: number;
 
   @IsNotEmpty()
@@ -81,12 +80,20 @@ export class CreateProductRequest {
   productType: string;
 
   @IsNotEmpty()
-  @Transform(({ value }) => String(value).split(";"))
+  @Transform(({ value }) =>
+    String(value)
+      .split(";")
+      .map((value) => value.trim()),
+  )
   @IsArray()
   productCategories: string[];
 
   @IsNotEmpty()
-  @Transform(({ value }) => String(value).split(";"))
+  @Transform(({ value }) =>
+    String(value)
+      .split(";")
+      .map((value) => value.trim()),
+  )
   @IsArray()
   productTags: string[];
 
@@ -95,6 +102,7 @@ export class CreateProductRequest {
   slug?: string;
 
   @IsOptional()
-  @IsString()
+  @Type(() => Number)
+  @IsNumber()
   businessId?: number;
 }

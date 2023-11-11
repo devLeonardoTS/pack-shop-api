@@ -9,10 +9,8 @@ import {
   Post,
   Put,
   Query,
-  UseGuards,
 } from "@nestjs/common";
 import { ProductTag, Tag } from "@prisma/client";
-import { JwtAuthGuard } from "@src/modules/auth/jwt-auth.guard";
 import { PaginationResponse } from "@src/modules/common/dtos/pagination.response";
 import { CommonQuery } from "../common/dtos/common.query";
 import { ProductTagService } from "../product/tag/product-tag.service";
@@ -27,7 +25,6 @@ export class TagController {
     private readonly productTagService: ProductTagService,
   ) {}
 
-  @UseGuards(JwtAuthGuard)
   @Post()
   async create(@Body() createRequest: CreateTagRequest): Promise<Tag> {
     return await this.tagService.create(createRequest);
@@ -63,7 +60,6 @@ export class TagController {
     return await this.tagService.remove(id);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Post("batch")
   async createMany(
     @Body() createRequest: CreateTagRequest,

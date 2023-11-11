@@ -31,7 +31,7 @@ export class PrismaAddressRepository implements IAddressRepository {
     });
 
     if (primaryAddress && isPrimary) {
-      const updateRequest = { ...createRequest, isPrimary: false };
+      const updateRequest = { isPrimary: false };
       await this.update(primaryAddress.id, updateRequest);
     }
 
@@ -45,7 +45,7 @@ export class PrismaAddressRepository implements IAddressRepository {
         logradouro,
         complemento,
         numero,
-        isPrimary,
+        isPrimary: primaryAddress ? isPrimary : true,
         title,
         description,
         profile: {
