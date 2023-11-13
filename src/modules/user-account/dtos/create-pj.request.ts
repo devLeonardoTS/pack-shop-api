@@ -10,7 +10,6 @@ import {
   IsEnum,
   IsNotEmpty,
   IsOptional,
-  IsPhoneNumber,
   IsString,
   MaxLength,
 } from "class-validator";
@@ -118,7 +117,6 @@ export class CreateUserPJRequest {
 
   @IsNotEmpty()
   @IsString()
-  @IsPhoneNumber()
   phone: string;
 
   @IsNotEmpty()
