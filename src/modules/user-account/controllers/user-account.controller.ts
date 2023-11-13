@@ -12,6 +12,7 @@ import {
 import { UserAccount } from "@prisma/client";
 import { CommonQuery } from "@src/modules/common/dtos/common.query";
 import { PaginationResponse } from "@src/modules/common/dtos/pagination.response";
+import { CreateUserPFRequest } from "../dtos/create-pf.request";
 import { CreateUserPJRequest } from "../dtos/create-pj.request";
 import { CreateUserAccountRequest } from "../dtos/create-user-account.request";
 import { UpdateUserAccountRequest } from "../dtos/update-user-account.request";
@@ -33,6 +34,13 @@ export class UserAccountController {
     @Body() createRequest: CreateUserPJRequest,
   ): Promise<UserAccount> {
     return await this.userAccountService.createPj(createRequest);
+  }
+
+  @Post("pf")
+  async createPf(
+    @Body() createRequest: CreateUserPFRequest,
+  ): Promise<UserAccount> {
+    return await this.userAccountService.createPf(createRequest);
   }
 
   @Get()

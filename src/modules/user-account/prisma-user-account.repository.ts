@@ -2,6 +2,8 @@ import { Injectable } from "@nestjs/common";
 import { UserAccount } from "@prisma/client";
 import PrismaService from "@src/databases/prisma/prisma.service";
 import { CommonQuery } from "@src/modules/common/dtos/common.query";
+import { EAccountRoleType } from "../types/account-role/account-role-type.enum";
+import { CreateUserPFRequest } from "./dtos/create-pf.request";
 import { CreateUserPJRequest } from "./dtos/create-pj.request";
 import { CreateUserAccountRequest } from "./dtos/create-user-account.request";
 import { UpdateUserAccountRequest } from "./dtos/update-user-account.request";
@@ -28,6 +30,10 @@ export class PrismaUserAccountRepository implements IUserAccountRepository {
   }
 
   async createPj(createRequest: CreateUserPJRequest): Promise<UserAccount> {
+    createRequest.roleType = EAccountRoleType.USER;
+    createRequest.isPrimaryAddress = true;
+    createRequest.isPrimaryPhone = true;
+
     const {
       bairro,
       businessType,
@@ -53,12 +59,12 @@ export class PrismaUserAccountRepository implements IUserAccountRepository {
       razaoSocial,
       roleType,
       confirmPassword,
-      description,
+      addressDescription,
       isPrimaryAddress,
       isPrimaryPhone,
       password,
       slug,
-      title,
+      addressTitle,
     } = createRequest;
 
     const createdAccount: UserAccount = await this.db.userAccount.create({
@@ -80,8 +86,8 @@ export class PrismaUserAccountRepository implements IUserAccountRepository {
                 logradouro,
                 numero,
                 complemento,
-                title,
-                description,
+                title: addressTitle,
+                description: addressDescription,
                 isPrimary: isPrimaryAddress,
               },
             },
@@ -127,6 +133,109 @@ export class PrismaUserAccountRepository implements IUserAccountRepository {
                 businessType: true,
               },
             },
+            addresses: {
+              where: {
+                isPrimary: true,
+              },
+            },
+            phones: {
+              where: {
+                isPrimary: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return createdAccount;
+  }
+
+  async createPf(createRequest: CreateUserPFRequest): Promise<UserAccount> {
+    createRequest.roleType = EAccountRoleType.USER;
+    createRequest.isPrimaryAddress = true;
+    createRequest.isPrimaryPhone = true;
+
+    const {
+      originType,
+      email,
+      isSubscribedToOffers,
+      fullName,
+      socialName,
+      birthDate,
+      cpf,
+      pais,
+      cep,
+      logradouro,
+      numero,
+      bairro,
+      cidade,
+      estado,
+      complemento,
+      phone,
+      phoneType,
+      roleType,
+      password,
+      confirmPassword,
+      slug,
+      isPrimaryAddress,
+      addressTitle,
+      addressDescription,
+      isPrimaryPhone,
+    } = createRequest;
+
+    const createdAccount: UserAccount = await this.db.userAccount.create({
+      data: {
+        email,
+        password,
+        roleType: roleType && { connect: { role: roleType } },
+        originType: originType && { connect: { origin: originType } },
+        profile: {
+          create: {
+            isSubscribedToOffers,
+            addresses: {
+              create: {
+                pais,
+                cep,
+                estado,
+                cidade,
+                bairro,
+                logradouro,
+                numero,
+                complemento,
+                title: addressTitle,
+                description: addressDescription,
+                isPrimary: isPrimaryAddress,
+              },
+            },
+            phones: {
+              create: {
+                number: phone,
+                isPrimary: isPrimaryPhone,
+                phoneType: {
+                  connect: {
+                    type: phoneType,
+                  },
+                },
+              },
+            },
+            consumer: {
+              create: {
+                cpf,
+                fullName,
+                birthDate,
+                socialName,
+              },
+            },
+          },
+        },
+      },
+      include: {
+        originType: true,
+        roleType: true,
+        profile: {
+          include: {
+            consumer: true,
             addresses: {
               where: {
                 isPrimary: true,

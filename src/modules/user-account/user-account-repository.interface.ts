@@ -1,5 +1,6 @@
 import { UserAccount } from "@prisma/client";
 import { CommonQuery } from "@src/modules/common/dtos/common.query";
+import { CreateUserPFRequest } from "./dtos/create-pf.request";
 import { CreateUserPJRequest } from "./dtos/create-pj.request";
 import { CreateUserAccountRequest } from "./dtos/create-user-account.request";
 import { UpdateUserAccountRequest } from "./dtos/update-user-account.request";
@@ -7,6 +8,7 @@ import { UpdateUserAccountRequest } from "./dtos/update-user-account.request";
 export interface IUserAccountRepository {
   create(createRequest: CreateUserAccountRequest): Promise<UserAccount>;
   createPj(createRequest: CreateUserPJRequest): Promise<UserAccount>;
+  createPf(createRequest: CreateUserPFRequest): Promise<UserAccount>;
   findMany(commonQuery: CommonQuery<UserAccount>): Promise<UserAccount[]>;
   findOne(commonQuery: CommonQuery<UserAccount>): Promise<UserAccount>;
   update(id: number, updateReq: UpdateUserAccountRequest): Promise<UserAccount>;

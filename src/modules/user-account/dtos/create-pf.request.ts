@@ -1,6 +1,5 @@
 import { EAccountOriginType } from "@src/modules/types/account-origin/account-origin-type.enum";
 import { EAccountRoleType } from "@src/modules/types/account-role/account-role-type.enum";
-import { EBusinessType } from "@src/modules/types/business/business-type.enum";
 import { EPhoneType } from "@src/modules/types/phone/phone-type.enum";
 import { Transform, Type } from "class-transformer";
 import {
@@ -15,7 +14,7 @@ import {
   MaxLength,
 } from "class-validator";
 
-export class CreateUserPJRequest {
+export class CreateUserPFRequest {
   @IsOptional()
   @IsEnum(EAccountRoleType)
   roleType: EAccountRoleType;
@@ -35,45 +34,21 @@ export class CreateUserPJRequest {
 
   @IsNotEmpty()
   @IsString()
-  @MaxLength(18)
-  cnpj: string;
+  fullName: string;
 
   @IsNotEmpty()
   @IsString()
-  razaoSocial: string;
-
-  @IsNotEmpty()
-  @IsString()
-  nomeFantasia: string;
-
-  @IsNotEmpty()
-  @IsString()
-  @MaxLength(15)
-  inscricaoMunicipal: string;
-
-  @IsNotEmpty()
-  @IsString()
-  @MaxLength(14)
-  inscricaoEstadual: string;
+  socialName: string;
 
   @IsNotEmpty()
   @Type(() => Date)
   @IsDate()
-  dataAbertura: Date;
-
-  @IsNotEmpty()
-  @IsEnum(EBusinessType)
-  businessType: EBusinessType;
+  birthDate: Date;
 
   @IsNotEmpty()
   @IsString()
   @MaxLength(11)
   cpf: string;
-
-  @IsNotEmpty()
-  @IsString()
-  @MaxLength(255)
-  fullName: string;
 
   @IsNotEmpty()
   @IsString()
