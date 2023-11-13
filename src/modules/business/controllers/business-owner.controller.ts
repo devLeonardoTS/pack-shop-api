@@ -6,10 +6,8 @@ import {
   ParseIntPipe,
   Post,
   Query,
-  UseGuards,
 } from "@nestjs/common";
 import { BusinessOwner } from "@prisma/client";
-import { JwtAuthGuard } from "@src/modules/auth/jwt-auth.guard";
 import { CommonQuery } from "@src/modules/common/dtos/common.query";
 import { BusinessOwnerService } from "../business-owner/business-owner.service";
 import { CreateBusinessOwnerRequest } from "../business-owner/dto/create-business-owner.request";
@@ -18,7 +16,6 @@ import { CreateBusinessOwnerRequest } from "../business-owner/dto/create-busines
 export class BusinessOwnerController {
   constructor(private readonly businessOwnerService: BusinessOwnerService) {}
 
-  @UseGuards(JwtAuthGuard)
   @Post()
   async create(
     @Param("businessId", ParseIntPipe) businessId: number,

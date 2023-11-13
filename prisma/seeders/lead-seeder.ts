@@ -2,7 +2,6 @@ import { faker } from "@faker-js/faker";
 import { Lead, PrismaClient } from "@prisma/client";
 
 export async function LeadSeeder(prismaClient: PrismaClient) {
-  console.log("🌱 [LeadSeeder]: Seeding...");
   const leads: Omit<Lead, "id" | "createdAt">[] = [];
 
   const hasBeenSeeded: boolean = (await prismaClient.lead.count()) > 0;

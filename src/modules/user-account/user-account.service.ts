@@ -9,6 +9,8 @@ import { UserAccount } from "@prisma/client";
 import { CommonQuery } from "@src/modules/common/dtos/common.query";
 import { PaginationResponse } from "@src/modules/common/dtos/pagination.response";
 import * as bcrypt from "bcrypt";
+import { CreateUserPFRequest } from "./dtos/create-pf.request";
+import { CreateUserPJRequest } from "./dtos/create-pj.request";
 import { CreateUserAccountRequest } from "./dtos/create-user-account.request";
 import { UpdateUserAccountRequest } from "./dtos/update-user-account.request";
 import { IUserAccountRepository } from "./user-account-repository.interface";
@@ -27,6 +29,25 @@ export class UserAccountService {
     createRequest = await this.createAccountValidation(createRequest);
 
     const resource = await this.repository.create(createRequest);
+
+    return resource;
+  }
+
+  async createPj(createRequest: CreateUserPJRequest): Promise<UserAccount> {
+    createRequest = (await this.createAccountValidation(
+      createRequest,
+    )) as CreateUserPJRequest;
+
+    const resource = await this.repository.createPj(createRequest);
+
+    return resource;
+  }
+  async createPf(createRequest: CreateUserPFRequest): Promise<UserAccount> {
+    createRequest = (await this.createAccountValidation(
+      createRequest,
+    )) as CreateUserPFRequest;
+
+    const resource = await this.repository.createPf(createRequest);
 
     return resource;
   }

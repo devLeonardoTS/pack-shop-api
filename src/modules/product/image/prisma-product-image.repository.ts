@@ -20,6 +20,26 @@ export class PrismaProductImageRepository implements IProductImageRepository {
   ): Promise<ProductImage> {
     const { file, productId, imageId, imageType } = createRequest;
 
+    const sameTypeImage = await this.db.productImage.findFirst({
+      where: {
+        productId,
+        image: {
+          imageType: {
+            type: imageType,
+          },
+        },
+      },
+    });
+
+    if (sameTypeImage) {
+      const updatedAttachedImage = await this.update({
+        file,
+        resourceId: sameTypeImage.id,
+        imageType,
+      });
+      return updatedAttachedImage;
+    }
+
     const uploadedImage = await this.imageService.create({ file, imageType });
 
     const attachedImage = await this.db.productImage
@@ -43,12 +63,9 @@ export class PrismaProductImageRepository implements IProductImageRepository {
   }
 
   async findOne(commonQuery: CommonQuery<ProductImage>): Promise<ProductImage> {
-    const {
-      pagination: { limit, page },
-      filters,
-      orderBy,
-      include,
-    } = commonQuery;
+    const { filters, orderBy, include } = commonQuery;
+
+    const { limit, page } = { ...commonQuery.pagination };
 
     const item: ProductImage = await this.db.productImage.findFirst({
       where: filters,
@@ -63,12 +80,9 @@ export class PrismaProductImageRepository implements IProductImageRepository {
   async findMany(
     commonQuery: CommonQuery<ProductImage>,
   ): Promise<ProductImage[]> {
-    const {
-      pagination: { limit, page },
-      filters,
-      orderBy,
-      include,
-    } = commonQuery;
+    const { filters, orderBy, include } = commonQuery;
+
+    const { limit, page } = { ...commonQuery.pagination };
 
     const take = limit;
     const skip = (page - 1) * limit;
@@ -88,17 +102,26 @@ export class PrismaProductImageRepository implements IProductImageRepository {
   }
 
   async update(updateReq: UpdateProductImageRequest): Promise<ProductImage> {
-    const { file, imageId, imageType, productId, resourceId } = updateReq;
+    const { file, imageType, resourceId } = updateReq;
 
-    await this.imageService.update(imageId, { file, imageType });
+    const resource = await this.findOne({
+      filters: {
+        id: resourceId,
+      },
+    });
+
+    const uploaded = await this.imageService.update(resource.imageId, {
+      file,
+      imageType,
+    });
 
     const updatedResource = await this.db.productImage.update({
       where: {
-        id: resourceId || 0,
+        id: resourceId,
       },
       data: {
-        imageId,
-        productId,
+        imageId: uploaded.id,
+        productId: resource.productId,
       },
       include: {
         image: { include: { imageType: true } },

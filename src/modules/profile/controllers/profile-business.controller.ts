@@ -5,10 +5,8 @@ import {
   Param,
   ParseIntPipe,
   Post,
-  UseGuards,
 } from "@nestjs/common";
 import { Business } from "@prisma/client";
-import { JwtAuthGuard } from "@src/modules/auth/jwt-auth.guard";
 import { BusinessService } from "@src/modules/business/business-profile.service";
 import { CreateBusinessRequest } from "@src/modules/business/dto/create-business.request";
 
@@ -16,7 +14,6 @@ import { CreateBusinessRequest } from "@src/modules/business/dto/create-business
 export class ProfileBusinessController {
   constructor(private readonly businessService: BusinessService) {}
 
-  @UseGuards(JwtAuthGuard)
   @Post()
   async create(
     @Param("profileId", ParseIntPipe) profileId: number,

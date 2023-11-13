@@ -278,7 +278,7 @@ model Product {
   widthCm Decimal @db.Decimal(10, 2)
 
   manufacturedAt DateTime
-  expiresAt DateTime
+  expiresAt DateTime? 
   
   isAvailable Boolean? @default(false)
 

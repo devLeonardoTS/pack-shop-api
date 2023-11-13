@@ -18,14 +18,14 @@ export class PrismaPhoneRepository implements IPhoneRepository {
     });
 
     if (primaryPhone && isPrimary) {
-      const updateRequest = { ...createRequest, isPrimary: false };
+      const updateRequest = { isPrimary: false };
       await this.update(primaryPhone.id, updateRequest);
     }
 
     const created = await this.db.phone.create({
       data: {
         number,
-        isPrimary,
+        isPrimary: primaryPhone ? isPrimary : true,
         phoneType: phoneType && {
           connect: {
             type: phoneType,

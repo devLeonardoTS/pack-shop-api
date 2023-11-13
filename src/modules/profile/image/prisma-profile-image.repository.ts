@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { ProfileImage } from "@prisma/client";
 import PrismaService from "@src/databases/prisma/prisma.service";
-import { PaginationQuery } from "@src/modules/common/dtos/pagination.query";
+import { CommonQuery } from "@src/modules/common/dtos/common.query";
 import { DatabaseException } from "@src/modules/common/exceptions/database.exception";
 import { ImageService } from "@src/modules/image/image.service";
 import { CloudinaryService } from "@src/modules/upload/cloudinary/cloudinary.service";
@@ -21,6 +21,26 @@ export class PrismaProfileImageRepository implements IProfileImageRepository {
     createRequest: CreateProfileImageRequest,
   ): Promise<ProfileImage> {
     const { profileId, file, imageType } = createRequest;
+
+    const sameTypeImage = await this.db.profileImage.findFirst({
+      where: {
+        profileId,
+        image: {
+          imageType: {
+            type: imageType,
+          },
+        },
+      },
+    });
+
+    if (sameTypeImage) {
+      const updated = await this.update({
+        file,
+        resourceId: sameTypeImage.id,
+        imageType,
+      });
+      return updated;
+    }
 
     const image = await this.imageService.create({ file, imageType });
 
@@ -44,11 +64,27 @@ export class PrismaProfileImageRepository implements IProfileImageRepository {
     return profileImage;
   }
 
+  async findOne(commonQuery: CommonQuery<ProfileImage>): Promise<ProfileImage> {
+    const { filters, orderBy, include } = commonQuery;
+
+    const { limit, page } = { ...commonQuery.pagination };
+
+    const item: ProfileImage = await this.db.profileImage.findFirst({
+      where: filters,
+      include: {
+        image: { include: { imageType: true } },
+        ...include,
+      },
+    });
+    return item;
+  }
+
   async findMany(
-    ownerId: number,
-    paginationQuery: PaginationQuery,
+    commonQuery: CommonQuery<ProfileImage>,
   ): Promise<ProfileImage[]> {
-    const { page, limit } = paginationQuery;
+    const { filters, orderBy, include } = commonQuery;
+
+    const { limit, page } = { ...commonQuery.pagination };
 
     const take = limit;
     const skip = (page - 1) * limit;
@@ -56,46 +92,45 @@ export class PrismaProfileImageRepository implements IProfileImageRepository {
     const list: ProfileImage[] = await this.db.profileImage.findMany({
       take,
       skip,
-      where: { profileId: ownerId },
+      where: filters,
+      orderBy,
       include: {
         image: { include: { imageType: true } },
+        ...include,
       },
     });
 
     return list;
   }
 
-  async findById(id: number): Promise<ProfileImage> {
-    const item: ProfileImage = await this.db.profileImage.findFirst({
-      where: { id },
-      include: {
-        image: { include: { imageType: true } },
+  async update(updateReq: UpdateProfileImageRequest): Promise<ProfileImage> {
+    const { file, imageType, resourceId } = updateReq;
+
+    const resource = await this.findOne({
+      filters: {
+        id: resourceId,
       },
     });
-    return item;
-  }
 
-  async update(
-    id: number,
-    updateReq: UpdateProfileImageRequest,
-  ): Promise<ProfileImage> {
-    const { file, imageId, imageType, profileId } = updateReq;
+    const uploaded = await this.imageService.update(resource.imageId, {
+      file,
+      imageType,
+    });
 
-    await this.imageService.update(imageId, { file, imageType });
-    const profileImage = await this.db.profileImage.update({
+    const updatedResource = await this.db.profileImage.update({
       where: {
-        id,
+        id: resourceId,
       },
       data: {
-        imageId,
-        profileId,
+        imageId: uploaded.id,
+        profileId: resource.profileId,
       },
       include: {
         image: { include: { imageType: true } },
       },
     });
 
-    return profileImage;
+    return updatedResource;
   }
 
   async remove(id: number): Promise<ProfileImage> {

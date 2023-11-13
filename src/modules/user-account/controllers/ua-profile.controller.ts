@@ -5,10 +5,8 @@ import {
   Param,
   ParseIntPipe,
   Post,
-  UseGuards,
 } from "@nestjs/common";
 import { Profile } from "@prisma/client";
-import { JwtAuthGuard } from "@src/modules/auth/jwt-auth.guard";
 import { CreateProfileRequest } from "@src/modules/profile/dto/create-profile.request";
 import { ProfileService } from "@src/modules/profile/profile.service";
 
@@ -16,7 +14,6 @@ import { ProfileService } from "@src/modules/profile/profile.service";
 export class UserAccountProfileController {
   constructor(private readonly profileService: ProfileService) {}
 
-  @UseGuards(JwtAuthGuard)
   @Post()
   async create(
     @Param("uaId", ParseIntPipe) uaId: number,
