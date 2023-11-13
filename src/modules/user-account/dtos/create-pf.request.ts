@@ -9,7 +9,6 @@ import {
   IsEnum,
   IsNotEmpty,
   IsOptional,
-  IsPhoneNumber,
   IsString,
   MaxLength,
 } from "class-validator";
@@ -93,7 +92,6 @@ export class CreateUserPFRequest {
 
   @IsNotEmpty()
   @IsString()
-  @IsPhoneNumber()
   phone: string;
 
   @IsNotEmpty()

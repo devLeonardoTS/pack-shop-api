@@ -6,14 +6,12 @@ import {
   IsNotEmpty,
   IsNumber,
   IsOptional,
-  IsPhoneNumber,
   IsString,
 } from "class-validator";
 
 export class CreatePhoneRequest {
   @IsNotEmpty()
   @IsString()
-  @IsPhoneNumber()
   number: string;
 
   @IsNotEmpty()
